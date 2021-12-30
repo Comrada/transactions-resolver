@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: test
+
+  sql:
+    init:
+      platform: h2
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
