@@ -1,5 +1,7 @@
 package com.github.comrada.wa.entity;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,18 @@ public class AlertDetail {
   @Column(length = 32)
   private String type;
 
+  @Column
+  private BigDecimal amount;
+
+  @Column(length = 16)
+  private String asset;
+
+  @Column
+  private BigDecimal usdAmount;
+
+  @Column
+  private Instant timestamp;
+
   @Column(length = 128)
   private String hash;
 
@@ -30,7 +44,19 @@ public class AlertDetail {
   private String fromWallet;
 
   @Column(length = 128)
+  private String fromName;
+
+  @Column
+  private String fromWalletUrl;
+
+  @Column(length = 128)
   private String toWallet;
+
+  @Column(length = 128)
+  private String toName;
+
+  @Column
+  private String toWalletUrl;
 
   public Long getId() {
     return id;
@@ -54,6 +80,38 @@ public class AlertDetail {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public BigDecimal getAmount() {
+    return amount;
+  }
+
+  public void setAmount(BigDecimal amount) {
+    this.amount = amount;
+  }
+
+  public String getAsset() {
+    return asset;
+  }
+
+  public void setAsset(String asset) {
+    this.asset = asset;
+  }
+
+  public BigDecimal getUsdAmount() {
+    return usdAmount;
+  }
+
+  public void setUsdAmount(BigDecimal usdAmount) {
+    this.usdAmount = usdAmount;
+  }
+
+  public Instant getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Instant timestamp) {
+    this.timestamp = timestamp;
   }
 
   public String getHash() {
@@ -80,12 +138,44 @@ public class AlertDetail {
     this.fromWallet = fromWallet;
   }
 
+  public String getFromName() {
+    return fromName;
+  }
+
+  public void setFromName(String fromName) {
+    this.fromName = fromName;
+  }
+
+  public String getFromWalletUrl() {
+    return fromWalletUrl;
+  }
+
+  public void setFromWalletUrl(String fromWalletUrl) {
+    this.fromWalletUrl = fromWalletUrl;
+  }
+
   public String getToWallet() {
     return toWallet;
   }
 
   public void setToWallet(String toWallet) {
     this.toWallet = toWallet;
+  }
+
+  public String getToName() {
+    return toName;
+  }
+
+  public void setToName(String toName) {
+    this.toName = toName;
+  }
+
+  public String getToWalletUrl() {
+    return toWalletUrl;
+  }
+
+  public void setToWalletUrl(String toWalletUrl) {
+    this.toWalletUrl = toWalletUrl;
   }
 
   @Override
