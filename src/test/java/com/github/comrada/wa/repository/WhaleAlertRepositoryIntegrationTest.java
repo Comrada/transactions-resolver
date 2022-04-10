@@ -2,8 +2,8 @@ package com.github.comrada.wa.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.comrada.wa.entity.WhaleAlert;
-import com.github.comrada.wa.entity.WhaleAlert.ProcessingStatus;
+import com.github.comrada.wa.model.WhaleAlert;
+import com.github.comrada.wa.model.WhaleAlert.ProcessingStatus;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;

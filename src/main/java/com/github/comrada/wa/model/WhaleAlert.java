@@ -1,4 +1,4 @@
-package com.github.comrada.wa.entity;
+package com.github.comrada.wa.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
