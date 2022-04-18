@@ -1,10 +1,9 @@
-package com.github.comrada.wa.resolver.parser;
+package com.github.comrada.wa.resolver.parser.html;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.comrada.wa.dto.TransactionDetail;
-import com.github.comrada.wa.resolver.parser.html.HtmlParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;

@@ -36,12 +36,8 @@ public class HtmlParser implements ResponseParser {
   }
 
   private void assertTableContent(Map<String, Element> tableRows) {
-    Element typeRow = tableRows.get("Type");
-    if (typeRow == null) {
-      throw new IllegalArgumentException("No 'Type' column, '%s' presented".formatted(
-          String.join(",", tableRows.keySet())));
-    }
-    TransactionTableParser tableParser = getTableParserForType(typeRow.text().trim());
+    String type = getTransactionType(tableRows);
+    TransactionTableParser tableParser = getTableParserForType(type);
     if (!tableParser.supported(tableRows.keySet())) {
       throw new IllegalArgumentException(
           "Probably page structure has been changed, number of table rows not equals 6 or 7");
@@ -73,9 +69,19 @@ public class HtmlParser implements ResponseParser {
   }
 
   private TransactionDetail buildFrom(Map<String, Element> values) {
-    String transactionType = values.get("Type").text().trim();
+    String transactionType = getTransactionType(values);
     TransactionTableParser tableParser = getTableParserForType(transactionType);
     return tableParser.parse(values);
+  }
+
+  @NotNull
+  private String getTransactionType(Map<String, Element> tableRows) {
+    Element typeRow = tableRows.get("Type");
+    if (typeRow == null) {
+      throw new IllegalArgumentException("No 'Type' column, '%s' presented".formatted(
+          String.join(",", tableRows.keySet())));
+    }
+    return typeRow.text().trim();
   }
 
   @NotNull

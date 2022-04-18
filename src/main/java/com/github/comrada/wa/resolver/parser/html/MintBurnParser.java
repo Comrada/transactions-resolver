@@ -39,6 +39,6 @@ public class MintBurnParser extends BaseTableParser implements TransactionTableP
 
   @Override
   public boolean supported(Set<String> columns) {
-    return false;
+    return REQUIRED_COLUMNS.containsAll(columns);
   }
 }
