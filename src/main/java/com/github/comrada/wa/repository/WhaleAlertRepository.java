@@ -4,12 +4,14 @@ import com.github.comrada.wa.model.WhaleAlert;
 import com.github.comrada.wa.model.WhaleAlert.ProcessingStatus;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
@@ -21,16 +23,15 @@ public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
   @Transactional
   @Modifying(flushAutomatically = true)
   @Query("""
-          update WhaleAlert wa set wa.processedAt = :processedAt,
-          wa.processAttempts = wa.processAttempts + 1 where wa.id = :id
+          update WhaleAlert wa set wa.processedAt = :processedAt where wa.id = :id
       """)
   void incrementAttempt(long id, Instant processedAt);
 
   @Transactional
   @Modifying(flushAutomatically = true)
   @Query("""
-          update WhaleAlert wa set wa.processedAt = :processedAt, wa.processStatus = :status,
-          wa.processAttempts = wa.processAttempts + 1 where wa.id = :id
+          update WhaleAlert wa set wa.processedAt = :processedAt, wa.processStatus = :status
+          where wa.id = :id
       """)
   void setStatus(long id, ProcessingStatus status, Instant processedAt);
 
@@ -46,11 +47,22 @@ public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
     return findByStatus(ProcessingStatus.DONE, PageRequest.of(0, limit));
   }
 
+  default void inProgress(long id, Instant processedAt) {
+    setStatus(id, ProcessingStatus.IN_PROGRESS, processedAt);
+  }
+
   default void done(long id, Instant processedAt) {
     setStatus(id, ProcessingStatus.DONE, processedAt);
   }
 
   default void fail(long id, Instant processedAt) {
     setStatus(id, ProcessingStatus.FAILED, processedAt);
+  }
+
+  @Transactional(isolation = Isolation.SERIALIZABLE)
+  default Optional<WhaleAlert> selectForExecution() {
+    Optional<WhaleAlert> first = findNewAlerts(1).stream().findFirst();
+    first.ifPresent(alert -> inProgress(alert.getId(), Instant.now()));
+    return first;
   }
 }

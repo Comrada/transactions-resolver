@@ -10,13 +10,17 @@ app:
       - { name: "Sec-GPC", value: "1" }
       - { name: "upgrade-insecure-requests", value: "1" }
       - { name: "User-Agent", value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36" }
+  execution:
+    initial-delay: 20s
+    max-retry-attempts: 3
+    database:
+      poll: true
+      initial-delay: 5s
+      no-job-delay: 60s
 
 spring:
   main:
     banner-mode: off
-
-  profiles:
-    active: prod
 
   datasource:
     url: 'jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME:whales}'

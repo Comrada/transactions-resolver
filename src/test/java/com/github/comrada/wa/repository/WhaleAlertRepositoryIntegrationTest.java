@@ -1,6 +1,8 @@
 package com.github.comrada.wa.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.comrada.wa.model.WhaleAlert;
 import com.github.comrada.wa.model.WhaleAlert.ProcessingStatus;
@@ -61,7 +63,6 @@ class WhaleAlertRepositoryIntegrationTest {
     Optional<WhaleAlert> found = whaleAlertRepository.findById(1L);
     assertTrue(found.isPresent());
     WhaleAlert alert = found.get();
-    assertEquals(1, alert.getProcessAttempts());
     assertEquals(ProcessingStatus.FAILED, alert.getProcessStatus());
   }
 
@@ -72,17 +73,6 @@ class WhaleAlertRepositoryIntegrationTest {
     Optional<WhaleAlert> found = whaleAlertRepository.findById(1L);
     assertTrue(found.isPresent());
     WhaleAlert alert = found.get();
-    assertEquals(1, alert.getProcessAttempts());
     assertEquals(ProcessingStatus.DONE, alert.getProcessStatus());
-  }
-
-  @Test
-  @Sql("whale_alerts.sql")
-  void incrementAttempt() {
-    whaleAlertRepository.incrementAttempt(1, Instant.now());
-    Optional<WhaleAlert> found = whaleAlertRepository.findById(1L);
-    assertTrue(found.isPresent());
-    WhaleAlert alert = found.get();
-    assertEquals(1, alert.getProcessAttempts());
   }
 }

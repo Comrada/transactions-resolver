@@ -40,9 +40,6 @@ public class WhaleAlert {
   @Column
   private Instant processedAt;
 
-  @Column(nullable = false)
-  private Integer processAttempts;
-
   public Long getId() {
     return id;
   }
@@ -107,16 +104,8 @@ public class WhaleAlert {
     this.processedAt = processedAt;
   }
 
-  public Integer getProcessAttempts() {
-    return processAttempts;
-  }
-
-  public void setProcessAttempts(Integer processAttempts) {
-    this.processAttempts = processAttempts;
-  }
-
   public enum ProcessingStatus {
-    NEW, DONE, FAILED
+    NEW, IN_PROGRESS, DONE, FAILED
   }
 
   @Override
