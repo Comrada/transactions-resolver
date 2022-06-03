@@ -38,7 +38,8 @@ public class DatabasePoller {
     Optional<WhaleAlert> foundAlert = alertRepository.selectForExecution();
     if (foundAlert.isPresent()) {
       WhaleAlert whaleAlert = foundAlert.get();
-      LOGGER.info("Start processing alert: {}", whaleAlert.getId());
+      LOGGER.info("Start processing alert id: {}, asset: {}", whaleAlert.getId(),
+          whaleAlert.getAsset());
       doExecution(whaleAlert);
       long jobDoneDelay = delayGenerator.getDelay();
       LOGGER.info("Finished processing alert: {}, waiting for {}s  before next alert...",
