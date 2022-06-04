@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import org.jsoup.nodes.Element;
 
-public class MintBurnParser extends BaseTableParser implements TransactionTableParser {
+public class SingleAddressParser extends BaseTableParser implements TransactionTableParser {
 
   private static final Set<String> REQUIRED_COLUMNS = Set.of(
       "Blockchain",

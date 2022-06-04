@@ -57,7 +57,7 @@ public class DatabasePoller {
       alertRepository.done(whaleAlert.getId(), Instant.now());
     } catch (ExecutionException e) {
       alertRepository.fail(whaleAlert.getId(), Instant.now());
-      LOGGER.error("Alert {} processing failed", whaleAlert.getId());
+      LOGGER.error("Alert {} processing failed. Reason: {}", whaleAlert.getId(), e.getMessage());
     }
   }
 

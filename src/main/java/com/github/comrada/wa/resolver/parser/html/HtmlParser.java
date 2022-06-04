@@ -18,8 +18,10 @@ public class HtmlParser implements ResponseParser {
   private static final String SELECTOR_DETAILS_TABLE_ROWS = "h1.color-primary ~ table.table>tbody>tr";
   private final Map<String, TransactionTableParser> transactionTableParsers = Map.of(
       "Transfer", new TransferParser(),
-      "Mint", new MintBurnParser(),
-      "Burn", new MintBurnParser()
+      "Mint", new SingleAddressParser(),
+      "Burn", new SingleAddressParser(),
+      "Lock", new SingleAddressParser(),
+      "Unlock", new SingleAddressParser()
   );
 
   @Override
