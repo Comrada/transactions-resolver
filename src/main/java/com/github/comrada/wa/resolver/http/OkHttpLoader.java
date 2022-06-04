@@ -1,20 +1,22 @@
 package com.github.comrada.wa.resolver.http;
 
-import com.github.comrada.wa.config.WebClientProperties;
 import com.github.comrada.wa.resolver.TransactionLoader;
-import okhttp3.*;
-import okhttp3.brotli.BrotliInterceptor;
-
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Map;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.brotli.BrotliInterceptor;
 
 public class OkHttpLoader implements TransactionLoader {
 
   private final Headers headers;
   private final OkHttpClient client;
 
-  public OkHttpLoader(WebClientProperties webClientProperties) {
-    headers = Headers.of(webClientProperties.getRequestHeaders());
+  public OkHttpLoader() {
+    headers = buildRequestHeaders();
     client = new OkHttpClient.Builder()
         .followRedirects(true)
         .retryOnConnectionFailure(true)
@@ -26,11 +28,10 @@ public class OkHttpLoader implements TransactionLoader {
   public String load(String transactionUrl) {
     Request request = buildRequest(transactionUrl);
     try (Response response = client.newCall(request).execute()) {
-      ResponseBody body = response.body();
-      if (body != null) {
-        return body.string();
+      if (response.isSuccessful()) {
+        return response.body().string();
       }
-      throw new IllegalStateException("Response body is null");
+      throw new IllegalStateException("HTTP Request failed");
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     }
@@ -42,5 +43,20 @@ public class OkHttpLoader implements TransactionLoader {
         .headers(headers)
         .get()
         .build();
+  }
+
+  private Headers buildRequestHeaders() {
+    return Headers.of(Map.of(
+        "Cache-Control", "no-cache",
+        "Pragma", "no-cache",
+        "Sec-Fetch-Dest", "document",
+        "Sec-Fetch-Mode", "navigate",
+        "Sec-Fetch-Site", "none",
+        "Sec-Fetch-User", "?1",
+        "Sec-GPC", "1",
+        "upgrade-insecure-requests", "1",
+        "User-Agent",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"
+    ));
   }
 }

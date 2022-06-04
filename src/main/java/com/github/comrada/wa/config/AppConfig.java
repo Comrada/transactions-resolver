@@ -21,12 +21,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({WebClientProperties.class, ExecutionProperties.class})
+@EnableConfigurationProperties(ExecutionProperties.class)
 public class AppConfig {
 
   @Bean
-  TransactionLoader transactionLoader(WebClientProperties webClientProperties) {
-    return new OkHttpLoader(webClientProperties);
+  TransactionLoader transactionLoader() {
+    return new OkHttpLoader();
   }
 
   @Bean

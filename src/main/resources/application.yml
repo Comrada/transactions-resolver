@@ -1,15 +1,4 @@
 app:
-  web-client:
-    request-headers:
-      - { name: "Cache-Control", value: "no-cache" }
-      - { name: "Pragma", value: "no-cache" }
-      - { name: "Sec-Fetch-Dest", value: "document" }
-      - { name: "Sec-Fetch-Mode", value: "navigate" }
-      - { name: "Sec-Fetch-Site", value: "none" }
-      - { name: "Sec-Fetch-User", value: "?1" }
-      - { name: "Sec-GPC", value: "1" }
-      - { name: "upgrade-insecure-requests", value: "1" }
-      - { name: "User-Agent", value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36" }
   execution:
     initial-delay: 20s
     max-retry-attempts: 3
