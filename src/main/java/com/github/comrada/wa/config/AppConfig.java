@@ -16,12 +16,10 @@ import com.github.comrada.wa.scheduling.TaskExecutor;
 import com.github.comrada.wa.scheduling.database.DatabasePoller;
 import java.util.function.Consumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(ExecutionProperties.class)
 public class AppConfig {
 
   @Bean
@@ -36,8 +34,8 @@ public class AppConfig {
 
   @Bean
   Consumer<WhaleAlert> whaleAlertTransactionCrawler(TransactionLoader transactionLoader,
-      AlertDetailRepository alertDetailRepository) {
-    return new WhaleAlertCrawler(transactionLoader, new HtmlParser(), alertDetailRepository);
+      ResponseParser responseParser, AlertDetailRepository alertDetailRepository) {
+    return new WhaleAlertCrawler(transactionLoader, responseParser, alertDetailRepository);
   }
 
   @Bean

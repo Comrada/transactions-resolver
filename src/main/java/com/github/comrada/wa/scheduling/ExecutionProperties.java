@@ -1,18 +1,18 @@
 package com.github.comrada.wa.scheduling;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.convert.DurationUnit;
+import org.springframework.stereotype.Component;
 
+@Component
 @ConfigurationProperties(prefix = "app.execution")
 public class ExecutionProperties {
 
-  private Duration initialDelay;
   private int maxRetryAttempts;
   private DatabaseProperties database;
-
-  public Duration getInitialDelay() {
-    return initialDelay;
-  }
+  private AmqpProperties amqp;
 
   public int getMaxRetryAttempts() {
     return maxRetryAttempts;
@@ -20,10 +20,6 @@ public class ExecutionProperties {
 
   public void setMaxRetryAttempts(int maxRetryAttempts) {
     this.maxRetryAttempts = maxRetryAttempts;
-  }
-
-  public void setInitialDelay(Duration initialDelay) {
-    this.initialDelay = initialDelay;
   }
 
   public DatabaseProperties getDatabase() {
@@ -34,10 +30,20 @@ public class ExecutionProperties {
     this.database = database;
   }
 
+  public AmqpProperties getAmqp() {
+    return amqp;
+  }
+
+  public void setAmqp(AmqpProperties amqp) {
+    this.amqp = amqp;
+  }
+
   public static final class DatabaseProperties {
 
     private boolean poll;
+    @DurationUnit(ChronoUnit.SECONDS)
     private Duration initialDelay;
+    @DurationUnit(ChronoUnit.SECONDS)
     private Duration noJobDelay;
 
     public boolean isPoll() {
@@ -62,6 +68,37 @@ public class ExecutionProperties {
 
     public void setNoJobDelay(Duration noJobDelay) {
       this.noJobDelay = noJobDelay;
+    }
+  }
+
+  public static final class AmqpProperties {
+
+    private String exchange;
+    private String routingKey;
+    private String queueName;
+
+    public String getExchange() {
+      return exchange;
+    }
+
+    public void setExchange(String exchange) {
+      this.exchange = exchange;
+    }
+
+    public String getRoutingKey() {
+      return routingKey;
+    }
+
+    public void setRoutingKey(String routingKey) {
+      this.routingKey = routingKey;
+    }
+
+    public String getQueueName() {
+      return queueName;
+    }
+
+    public void setQueueName(String queueName) {
+      this.queueName = queueName;
     }
   }
 }
