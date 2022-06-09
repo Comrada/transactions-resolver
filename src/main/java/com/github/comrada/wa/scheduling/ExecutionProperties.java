@@ -75,7 +75,6 @@ public class ExecutionProperties {
 
     private String exchange;
     private String routingKey;
-    private String queueName;
 
     public String getExchange() {
       return exchange;
@@ -91,14 +90,6 @@ public class ExecutionProperties {
 
     public void setRoutingKey(String routingKey) {
       this.routingKey = routingKey;
-    }
-
-    public String getQueueName() {
-      return queueName;
-    }
-
-    public void setQueueName(String queueName) {
-      this.queueName = queueName;
     }
   }
 }

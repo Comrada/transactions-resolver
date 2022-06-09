@@ -33,9 +33,9 @@ public class RabbitMqConfig {
   }
 
   @Bean
-  Queue whalesQueue(ExecutionProperties properties) {
+  Queue whalesQueue() {
     return QueueBuilder
-        .nonDurable(properties.getAmqp().getQueueName())
+        .nonDurable()
         .autoDelete()
         .build();
   }

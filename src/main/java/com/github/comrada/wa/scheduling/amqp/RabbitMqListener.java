@@ -25,7 +25,7 @@ public final class RabbitMqListener {
     this.alertRepository = requireNonNull(alertRepository);
   }
 
-  @RabbitListener(queues = {"#{executionProperties.getAmqp().getQueueName()}"})
+  @RabbitListener(queues = {"#{whalesQueue.getName()}"})
   public void listen(List<NewAlertEvent> event) {
     event.stream()
         .map(this::convert)

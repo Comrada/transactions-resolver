@@ -8,7 +8,6 @@ app:
     amqp:
       exchange: ${APP_AMQP_EXCHANGE:whales}
       routing-key: ${APP_AMQP_ROUTING_KEY:alert.new}
-      queue-name: ${APP_AMQP_QUEUE_NAME:new-alerts}
 
 spring:
   main:
