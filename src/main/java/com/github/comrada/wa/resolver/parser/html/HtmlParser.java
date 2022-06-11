@@ -1,6 +1,7 @@
 package com.github.comrada.wa.resolver.parser.html;
 
 import static com.github.comrada.wa.resolver.parser.html.HtmlUtils.select;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
 import com.github.comrada.wa.dto.TransactionDetail;
@@ -16,13 +17,11 @@ import org.jsoup.nodes.Element;
 public class HtmlParser implements ResponseParser {
 
   private static final String SELECTOR_DETAILS_TABLE_ROWS = "h1.color-primary ~ table.table>tbody>tr";
-  private final Map<String, TransactionTableParser> transactionTableParsers = Map.of(
-      "Transfer", new TransferParser(),
-      "Mint", new SingleAddressParser(),
-      "Burn", new SingleAddressParser(),
-      "Lock", new SingleAddressParser(),
-      "Unlock", new SingleAddressParser()
-  );
+  private final Map<String, TransactionTableParser> transactionTableParsers;
+
+  public HtmlParser(Map<String, TransactionTableParser> transactionTableParsers) {
+    this.transactionTableParsers = requireNonNull(transactionTableParsers);
+  }
 
   @Override
   public TransactionDetail parse(String content) {

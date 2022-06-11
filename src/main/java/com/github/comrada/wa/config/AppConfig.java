@@ -7,13 +7,19 @@ import com.github.comrada.wa.repository.WhaleAlertRepository;
 import com.github.comrada.wa.resolver.TransactionLoader;
 import com.github.comrada.wa.resolver.http.OkHttpLoader;
 import com.github.comrada.wa.resolver.parser.ResponseParser;
+import com.github.comrada.wa.resolver.parser.TransactionTableParser;
+import com.github.comrada.wa.resolver.parser.html.EtherscanTableParser;
 import com.github.comrada.wa.resolver.parser.html.HtmlParser;
+import com.github.comrada.wa.resolver.parser.html.NftSaleParser;
+import com.github.comrada.wa.resolver.parser.html.SingleAddressParser;
+import com.github.comrada.wa.resolver.parser.html.TransferParser;
 import com.github.comrada.wa.scheduling.BlockingTaskExecutor;
 import com.github.comrada.wa.scheduling.ExecutionProperties;
 import com.github.comrada.wa.scheduling.ExecutionProperties.DatabaseProperties;
 import com.github.comrada.wa.scheduling.RetryingTaskExecutor;
 import com.github.comrada.wa.scheduling.TaskExecutor;
 import com.github.comrada.wa.scheduling.database.DatabasePoller;
+import java.util.Map;
 import java.util.function.Consumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +34,16 @@ public class AppConfig {
   }
 
   @Bean
-  ResponseParser responseParser() {
-    return new HtmlParser();
+  ResponseParser responseParser(TransactionLoader transactionLoader) {
+    Map<String, TransactionTableParser> transactionTableParsers = Map.of(
+        "Transfer", new TransferParser(),
+        "Mint", new SingleAddressParser(),
+        "Burn", new SingleAddressParser(),
+        "Lock", new SingleAddressParser(),
+        "Unlock", new SingleAddressParser(),
+        "NFT Sale", new NftSaleParser(transactionLoader, new EtherscanTableParser())
+    );
+    return new HtmlParser(transactionTableParsers);
   }
 
   @Bean

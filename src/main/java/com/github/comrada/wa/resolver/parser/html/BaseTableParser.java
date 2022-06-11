@@ -18,7 +18,6 @@ public abstract class BaseTableParser {
       "\\$([\\d,]*\\.?[\\d,]*)\\sUSD");
   private static final Pattern PATTERN_TIMESTAMP =
       Pattern.compile("\\(([a-zA-Z]{3},\\s\\d{1,2}\\s[a-zA-Z]{3}\\s[\\d\\s:]+(UTC|GMT))\\)$");
-  private static final String SELECTOR_LINK = "a";
   private static final String SELECTOR_ADDRESS_BLOCK = "div>i>span.d-lg-block";
   private static final String SELECTOR_MULTI_ADDRESS_BLOCK = "div>i";
   private static final String SELECTOR_BOLD_TEXT = "b";
@@ -26,19 +25,6 @@ public abstract class BaseTableParser {
 
   protected String parseSingleStringValue(Element row) {
     return row.text().trim();
-  }
-
-  @Nullable
-  protected String parseBlockWithUrl(Element walletRow) {
-    try {
-      return select(walletRow, SELECTOR_LINK)
-          .stream()
-          .findFirst()
-          .map(element -> element.attr("href"))
-          .orElse(null);
-    } catch (IllegalArgumentException e) {
-      return null;
-    }
   }
 
   protected String parseWalletName(Element walletRow) {

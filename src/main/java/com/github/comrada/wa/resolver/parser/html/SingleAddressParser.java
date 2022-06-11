@@ -1,5 +1,7 @@
 package com.github.comrada.wa.resolver.parser.html;
 
+import static com.github.comrada.wa.resolver.parser.html.HtmlUtils.parseUrl;
+
 import com.github.comrada.wa.dto.TransactionDetail;
 import com.github.comrada.wa.resolver.parser.TransactionTableParser;
 import java.util.Map;
@@ -27,10 +29,10 @@ public class SingleAddressParser extends BaseTableParser implements TransactionT
         parseUsdAmount(rows.get("Amount")),
         parseTimestamp(rows.get("Timestamp")),
         parseAddress(rows.get("Hash")),
-        parseBlockWithUrl(rows.get("Hash")),
+        parseUrl(rows.get("Hash")),
         parseAddress(rows.get("Address")),
         parseWalletName(rows.get("Address")),
-        parseBlockWithUrl(rows.get("Address")),
+        parseUrl(rows.get("Address")),
         null,
         null,
         null
@@ -39,6 +41,6 @@ public class SingleAddressParser extends BaseTableParser implements TransactionT
 
   @Override
   public boolean supported(Set<String> columns) {
-    return REQUIRED_COLUMNS.containsAll(columns);
+    return columns.size() == REQUIRED_COLUMNS.size() && REQUIRED_COLUMNS.containsAll(columns);
   }
 }

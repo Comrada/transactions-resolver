@@ -1,5 +1,7 @@
 package com.github.comrada.wa.resolver.parser.html;
 
+import static com.github.comrada.wa.resolver.parser.html.HtmlUtils.parseUrl;
+
 import com.github.comrada.wa.dto.TransactionDetail;
 import com.github.comrada.wa.resolver.parser.TransactionTableParser;
 import java.util.Map;
@@ -28,18 +30,18 @@ public class TransferParser extends BaseTableParser implements TransactionTableP
         parseUsdAmount(rows.get("Amount")),
         parseTimestamp(rows.get("Timestamp")),
         parseAddress(rows.get("Hash")),
-        parseBlockWithUrl(rows.get("Hash")),
+        parseUrl(rows.get("Hash")),
         parseAddress(rows.get("From")),
         parseWalletName(rows.get("From")),
-        parseBlockWithUrl(rows.get("From")),
+        parseUrl(rows.get("From")),
         parseAddress(rows.get("To")),
         parseWalletName(rows.get("To")),
-        parseBlockWithUrl(rows.get("To"))
+        parseUrl(rows.get("To"))
     );
   }
 
   @Override
   public boolean supported(Set<String> columns) {
-    return REQUIRED_COLUMNS.containsAll(columns);
+    return columns.size() == REQUIRED_COLUMNS.size() && REQUIRED_COLUMNS.containsAll(columns);
   }
 }
