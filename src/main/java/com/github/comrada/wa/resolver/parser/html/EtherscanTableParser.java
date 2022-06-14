@@ -13,6 +13,7 @@ public class EtherscanTableParser implements ResponseParser {
   private static final String BASE_URL = "https://etherscan.io";
   private static final String SELECTOR_FROM_ADDRESS = "a#addressCopy";
   private static final String SELECTOR_TO_ADDRESS = "a#contractCopy";
+  private static final String WALLET_ADDRESS_ATTR = "data-original-title";
 
   @Override
   public TransactionDetail parse(String content) {
@@ -29,7 +30,16 @@ public class EtherscanTableParser implements ResponseParser {
   }
 
   private String parseFromAddress(Document doc) {
-    return select(doc, SELECTOR_FROM_ADDRESS).text();
+    return select(doc, SELECTOR_FROM_ADDRESS).stream()
+        .findFirst()
+        .map(link -> {
+          if (link.hasAttr(WALLET_ADDRESS_ATTR)) {
+            return link.attr(WALLET_ADDRESS_ATTR);
+          } else {
+            return link.text();
+          }
+        })
+        .orElse(null);
   }
 
   private String parseToAddress(Document doc) {
