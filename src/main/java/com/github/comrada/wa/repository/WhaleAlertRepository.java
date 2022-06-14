@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
 
-  @Query("select wa from WhaleAlert wa where wa.processStatus = :status order by wa.id")
+  @Query("select wa from WhaleAlert wa where wa.processStatus = :status and wa.link is not null order by wa.id")
   List<WhaleAlert> findByStatus(ProcessingStatus status, Pageable pageable);
 
   @Transactional

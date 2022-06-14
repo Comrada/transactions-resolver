@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, WalletId> {
@@ -17,14 +18,16 @@ public interface WalletRepository extends JpaRepository<Wallet, WalletId> {
   void addWallet(Wallet wallet);
 
   default void addWallet(String asset, String address) {
-    Wallet wallet = new Wallet();
-    WalletId id = WalletId.builder()
-        .asset(asset)
-        .address(address)
-        .build();
-    if (findById(id).isEmpty()) {
-      wallet.setId(id);
-      addWallet(wallet);
+    if (StringUtils.hasText(asset) && StringUtils.hasText(address)) {
+      Wallet wallet = new Wallet();
+      WalletId id = WalletId.builder()
+          .asset(asset)
+          .address(address)
+          .build();
+      if (findById(id).isEmpty()) {
+        wallet.setId(id);
+        addWallet(wallet);
+      }
     }
   }
 }

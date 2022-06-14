@@ -60,4 +60,20 @@ class WalletRepositoryIntegrationTest {
     Wallet actual = item.get();
     assertEquals(expected, actual);
   }
+
+  @Test
+  void emptyAssetIsNotStored() {
+    repository.addWallet("", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg");
+
+    List<Wallet> wallets = repository.findAll();
+    assertTrue(wallets.isEmpty());
+  }
+
+  @Test
+  void emptyAddressIsNotStored() {
+    repository.addWallet("XRP", "");
+
+    List<Wallet> wallets = repository.findAll();
+    assertTrue(wallets.isEmpty());
+  }
 }
