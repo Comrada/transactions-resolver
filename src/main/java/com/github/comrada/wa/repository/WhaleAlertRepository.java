@@ -23,13 +23,6 @@ public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
   @Transactional
   @Modifying(flushAutomatically = true)
   @Query("""
-          update WhaleAlert wa set wa.processedAt = :processedAt where wa.id = :id
-      """)
-  void incrementAttempt(long id, Instant processedAt);
-
-  @Transactional
-  @Modifying(flushAutomatically = true)
-  @Query("""
           update WhaleAlert wa set wa.processedAt = :processedAt, wa.processStatus = :status
           where wa.id = :id
       """)

@@ -3,6 +3,7 @@ package com.github.comrada.wa.config;
 import com.github.comrada.wa.crawler.WhaleAlertCrawler;
 import com.github.comrada.wa.model.WhaleAlert;
 import com.github.comrada.wa.repository.AlertDetailRepository;
+import com.github.comrada.wa.repository.WalletRepository;
 import com.github.comrada.wa.repository.WhaleAlertRepository;
 import com.github.comrada.wa.resolver.TransactionLoader;
 import com.github.comrada.wa.resolver.http.OkHttpLoader;
@@ -48,8 +49,8 @@ public class AppConfig {
 
   @Bean
   Consumer<WhaleAlert> whaleAlertTransactionCrawler(TransactionLoader transactionLoader,
-      ResponseParser responseParser, AlertDetailRepository alertDetailRepository) {
-    return new WhaleAlertCrawler(transactionLoader, responseParser, alertDetailRepository);
+      ResponseParser responseParser, AlertDetailRepository alertDetailRepository, WalletRepository walletRepository) {
+    return new WhaleAlertCrawler(transactionLoader, responseParser, alertDetailRepository, walletRepository);
   }
 
   @Bean
