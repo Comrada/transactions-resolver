@@ -76,4 +76,21 @@ class WalletRepositoryIntegrationTest {
     List<Wallet> wallets = repository.findAll();
     assertTrue(wallets.isEmpty());
   }
+
+  @Test
+  void addWalletWithExchange() {
+    WalletId id = WalletId.builder()
+        .asset("XRP")
+        .address("rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg")
+        .build();
+    Wallet expected = new Wallet();
+    expected.setId(id);
+    repository.addWallet("XRP", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", true);
+
+    Optional<Wallet> item = repository.findById(id);
+    assertTrue(item.isPresent());
+    Wallet actual = item.get();
+    assertEquals(expected, actual);
+    assertTrue(actual.isExchange());
+  }
 }

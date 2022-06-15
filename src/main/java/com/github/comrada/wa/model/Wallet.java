@@ -29,6 +29,9 @@ public class Wallet {
   @Column(name = "checked_at")
   private Instant checkedAt;
 
+  @Column
+  private Boolean exchange;
+
   public Wallet() {
   }
 
@@ -54,6 +57,14 @@ public class Wallet {
 
   public void setCheckedAt(Instant checkedAt) {
     this.checkedAt = checkedAt;
+  }
+
+  public Boolean isExchange() {
+    return exchange;
+  }
+
+  public void setExchange(Boolean exchange) {
+    this.exchange = exchange;
   }
 
   @Override

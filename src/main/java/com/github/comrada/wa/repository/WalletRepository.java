@@ -14,10 +14,17 @@ public interface WalletRepository extends JpaRepository<Wallet, WalletId> {
 
   @Transactional
   @Modifying(flushAutomatically = true)
-  @Query(value = "insert into wallets (asset, address) values (:#{#wallet.id.asset}, :#{#wallet.id.address})", nativeQuery = true)
+  @Query(value = """
+      insert into wallets (asset, address, exchange)
+      values (:#{#wallet.id.asset}, :#{#wallet.id.address}, :#{#wallet.exchange})
+      """, nativeQuery = true)
   void addWallet(Wallet wallet);
 
   default void addWallet(String asset, String address) {
+    addWallet(asset, address, null);
+  }
+
+  default void addWallet(String asset, String address, Boolean isExchange) {
     if (StringUtils.hasText(asset) && StringUtils.hasText(address)) {
       Wallet wallet = new Wallet();
       WalletId id = WalletId.builder()
@@ -26,6 +33,7 @@ public interface WalletRepository extends JpaRepository<Wallet, WalletId> {
           .build();
       if (findById(id).isEmpty()) {
         wallet.setId(id);
+        wallet.setExchange(isExchange);
         addWallet(wallet);
       }
     }

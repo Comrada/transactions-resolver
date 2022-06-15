@@ -33,11 +33,15 @@ public class WhaleAlertCrawler implements Consumer<WhaleAlert> {
     saveDetails(alert.getId(), transactionDetail);
   }
 
-  private void saveDetails(Long alertId, TransactionDetail transactionDetail) {
-    AlertDetail alertDetail = createAlertDetail(alertId, transactionDetail);
+  private void saveDetails(Long alertId, TransactionDetail dto) {
+    AlertDetail alertDetail = createAlertDetail(alertId, dto);
     alertDetailRepository.save(alertDetail);
-    walletRepository.addWallet(transactionDetail.asset(), transactionDetail.fromWallet());
-    walletRepository.addWallet(transactionDetail.asset(), transactionDetail.toWallet());
+    walletRepository.addWallet(dto.asset(), dto.fromWallet(), isExchange(dto.fromName()));
+    walletRepository.addWallet(dto.asset(), dto.toWallet(), isExchange(dto.toName()));
+  }
+
+  private boolean isExchange(String walletName) {
+    return walletName != null && walletName.toLowerCase().contains("exchange");
   }
 
   private AlertDetail createAlertDetail(Long id, TransactionDetail dto) {
