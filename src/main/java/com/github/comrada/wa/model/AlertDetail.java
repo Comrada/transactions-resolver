@@ -22,13 +22,13 @@ public class AlertDetail {
   @Column(length = 32)
   private String type;
 
-  @Column
+  @Column(precision = 19, scale = 2)
   private BigDecimal amount;
 
   @Column(length = 16)
   private String asset;
 
-  @Column
+  @Column(precision = 19, scale = 2)
   private BigDecimal usdAmount;
 
   @Column

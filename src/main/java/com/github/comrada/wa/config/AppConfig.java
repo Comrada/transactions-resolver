@@ -1,5 +1,6 @@
 package com.github.comrada.wa.config;
 
+import com.github.comrada.wa.crawler.DetailsSaver;
 import com.github.comrada.wa.crawler.WhaleAlertCrawler;
 import com.github.comrada.wa.model.WhaleAlert;
 import com.github.comrada.wa.repository.AlertDetailRepository;
@@ -49,8 +50,13 @@ public class AppConfig {
 
   @Bean
   Consumer<WhaleAlert> whaleAlertTransactionCrawler(TransactionLoader transactionLoader,
-      ResponseParser responseParser, AlertDetailRepository alertDetailRepository, WalletRepository walletRepository) {
-    return new WhaleAlertCrawler(transactionLoader, responseParser, alertDetailRepository, walletRepository);
+      ResponseParser responseParser, DetailsSaver detailsSaver) {
+    return new WhaleAlertCrawler(transactionLoader, responseParser, detailsSaver);
+  }
+
+  @Bean
+  DetailsSaver detailsSaver(AlertDetailRepository alertDetailRepository, WalletRepository walletRepository) {
+    return new DetailsSaver(alertDetailRepository, walletRepository);
   }
 
   @Bean
