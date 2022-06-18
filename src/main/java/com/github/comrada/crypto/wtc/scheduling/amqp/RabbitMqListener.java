@@ -2,10 +2,9 @@ package com.github.comrada.crypto.wtc.scheduling.amqp;
 
 import static java.util.Objects.requireNonNull;
 
-import com.github.comrada.crypto.wtc.repository.WhaleAlertRepository;
 import com.github.comrada.crypto.wtc.events.NewAlertEvent;
 import com.github.comrada.crypto.wtc.model.WhaleAlert;
-import com.github.comrada.crypto.wtc.model.WhaleAlert.ProcessingStatus;
+import com.github.comrada.crypto.wtc.repository.WhaleAlertRepository;
 import com.github.comrada.crypto.wtc.scheduling.ExecutionException;
 import com.github.comrada.crypto.wtc.scheduling.TaskExecutor;
 import java.time.Instant;
@@ -29,34 +28,25 @@ public final class RabbitMqListener {
   @RabbitListener(queues = {"#{whalesQueue.getName()}"})
   public void listen(List<NewAlertEvent> event) {
     event.stream()
-        .map(this::convert)
-        .filter(alert -> StringUtils.hasText(alert.getLink()))
+        .filter(alert -> StringUtils.hasText(alert.link()))
         .forEach(alert -> {
-          LOGGER.info("New alert with id: {} received, asset: {}", alert.getId(), alert.getAsset());
+          LOGGER.info("New alert with id: {} received, asset: {}", alert.id(), alert.asset());
           doExecution(alert);
-          LOGGER.info("Finished processing alert: {}", alert.getId());
+          LOGGER.info("Finished processing alert: {}", alert.id());
         });
   }
 
-  private void doExecution(WhaleAlert whaleAlert) {
+  private void doExecution(NewAlertEvent whaleAlert) {
     try {
-      taskExecutor.submit(whaleAlert);
-      alertRepository.done(whaleAlert.getId(), Instant.now());
+      alertRepository
+          .selectForExecution(whaleAlert.id())
+          .ifPresent(existingRecord -> {
+            taskExecutor.submit(existingRecord);
+            alertRepository.done(existingRecord.getId(), Instant.now());
+          });
     } catch (ExecutionException e) {
-      alertRepository.fail(whaleAlert.getId(), Instant.now());
-      LOGGER.error("Alert {} processing failed. Reason: {}", whaleAlert.getId(), e.getMessage());
+      alertRepository.fail(whaleAlert.id(), Instant.now());
+      LOGGER.error("Alert {} processing failed. Reason: {}", whaleAlert.id(), e.getMessage());
     }
-  }
-
-  private WhaleAlert convert(NewAlertEvent event) {
-    WhaleAlert whaleAlert = new WhaleAlert();
-    whaleAlert.setId(event.id());
-    whaleAlert.setAmount(event.amount());
-    whaleAlert.setAsset(event.asset());
-    whaleAlert.setLink(event.link());
-    whaleAlert.setMessage(event.message());
-    whaleAlert.setPostedAt(event.postedAt().toInstant());
-    whaleAlert.setProcessStatus(ProcessingStatus.NEW);
-    return whaleAlert;
   }
 }

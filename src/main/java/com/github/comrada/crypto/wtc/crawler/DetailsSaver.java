@@ -29,7 +29,7 @@ public class DetailsSaver {
   }
 
   private void saveWallet(String asset, String address, String walletName) {
-    if (!addressExclusions.contains(address)) {
+    if (address != null && !addressExclusions.contains(address)) {
       walletRepository.addWallet(asset, address, isExchange(walletName));
     }
   }

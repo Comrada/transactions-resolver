@@ -28,6 +28,9 @@ public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
       """)
   void setStatus(long id, ProcessingStatus status, Instant processedAt);
 
+  @Query("select w from WhaleAlert w where w.id = :id and w.processStatus = :status")
+  Optional<WhaleAlert> findByIdAndStatus(long id, ProcessingStatus status);
+
   default List<WhaleAlert> findNewAlerts(int limit) {
     return findByStatus(ProcessingStatus.NEW, PageRequest.of(0, limit));
   }
@@ -57,5 +60,14 @@ public interface WhaleAlertRepository extends JpaRepository<WhaleAlert, Long> {
     Optional<WhaleAlert> first = findNewAlerts(1).stream().findFirst();
     first.ifPresent(alert -> inProgress(alert.getId(), Instant.now()));
     return first;
+  }
+
+  @Transactional(isolation = Isolation.SERIALIZABLE)
+  default Optional<WhaleAlert> selectForExecution(long id) {
+    Optional<WhaleAlert> foundAlert = findByIdAndStatus(id, ProcessingStatus.NEW);
+    if (foundAlert.isPresent()) {
+      inProgress(id, Instant.now());
+    }
+    return foundAlert;
   }
 }

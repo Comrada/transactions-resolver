@@ -75,4 +75,44 @@ class WhaleAlertRepositoryIntegrationTest {
     WhaleAlert alert = found.get();
     assertEquals(ProcessingStatus.DONE, alert.getProcessStatus());
   }
+
+  @Test
+  @Sql("whale_alerts.sql")
+  void findByIdAndStatusNew() {
+    Optional<WhaleAlert> found = whaleAlertRepository.findByIdAndStatus(1, ProcessingStatus.NEW);
+    assertTrue(found.isPresent());
+    WhaleAlert alert = found.get();
+    assertEquals(1, alert.getId());
+    assertEquals(ProcessingStatus.NEW, alert.getProcessStatus());
+  }
+
+  @Test
+  @Sql("whale_alerts.sql")
+  void findByIdAndStatusInProgress() {
+    Optional<WhaleAlert> found = whaleAlertRepository.findByIdAndStatus(4, ProcessingStatus.IN_PROGRESS);
+    assertTrue(found.isPresent());
+    WhaleAlert alert = found.get();
+    assertEquals(4, alert.getId());
+    assertEquals(ProcessingStatus.IN_PROGRESS, alert.getProcessStatus());
+  }
+
+  @Test
+  @Sql("whale_alerts.sql")
+  void findByIdAndStatusDone() {
+    Optional<WhaleAlert> found = whaleAlertRepository.findByIdAndStatus(3, ProcessingStatus.DONE);
+    assertTrue(found.isPresent());
+    WhaleAlert alert = found.get();
+    assertEquals(3, alert.getId());
+    assertEquals(ProcessingStatus.DONE, alert.getProcessStatus());
+  }
+
+  @Test
+  @Sql("whale_alerts.sql")
+  void findByIdAndStatusFailed() {
+    Optional<WhaleAlert> found = whaleAlertRepository.findByIdAndStatus(2, ProcessingStatus.FAILED);
+    assertTrue(found.isPresent());
+    WhaleAlert alert = found.get();
+    assertEquals(2, alert.getId());
+    assertEquals(ProcessingStatus.FAILED, alert.getProcessStatus());
+  }
 }

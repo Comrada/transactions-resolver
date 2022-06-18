@@ -20,4 +20,9 @@ VALUES (1, '2,999 #PAXG (5,392,567 USD) transferred from #Binance to unknown wal
         '2021-12-20 09:43:38', 'USDC', '60000000', 'DONE', '2021-12-21 00:00:10'),
        (30, '60,000,000 #USDC (60,000,000 USD) transferred from unknown wallet to #CryptoCom',
         'https://whale-alert.io/transaction/ethereum/ca08ac7675440bc7e016504d7fdc18b52c0c144a60a19f729d61c9ed405a7d68',
-        '2021-12-20 09:43:39', 'USDC', '60000000', 'DONE', '2021-12-21 00:00:11');
+        '2021-12-20 09:43:39', 'USDC', '60000000', 'DONE', '2021-12-21 00:00:11'),
+
+-- in progress
+       (4, '60,000,000 #USDC (60,000,000 USD) transferred from unknown wallet to #CryptoCom',
+        'https://whale-alert.io/transaction/ethereum/ca08ac7675440bc7e016504d7fdc18b52c0c144a60a19f729d61c9ed405a7d68',
+        '2021-12-20 09:43:39', 'USDC', '60000000', 'IN_PROGRESS', '2021-12-21 00:00:11');

@@ -104,6 +104,10 @@ public class WhaleAlert {
     this.processedAt = processedAt;
   }
 
+  public boolean isNew() {
+    return processStatus == ProcessingStatus.NEW;
+  }
+
   public enum ProcessingStatus {
     NEW, IN_PROGRESS, DONE, FAILED
   }
