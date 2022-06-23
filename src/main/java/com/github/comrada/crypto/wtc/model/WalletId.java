@@ -1,5 +1,7 @@
 package com.github.comrada.crypto.wtc.model;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,6 +15,8 @@ public class WalletId implements Serializable {
 
   @Serial
   private static final long serialVersionUID = 1375066493278443982L;
+  @Column(nullable = false, length = 32)
+  private String blockchain;
   @Column(nullable = false, length = 8)
   private String asset;
 
@@ -22,9 +26,18 @@ public class WalletId implements Serializable {
   public WalletId() {
   }
 
-  public WalletId(String asset, String address) {
-    this.asset = asset;
-    this.address = address;
+  public WalletId(String blockchain, String asset, String address) {
+    this.blockchain = requireNonNull(blockchain);
+    this.asset = requireNonNull(asset);
+    this.address = requireNonNull(address);
+  }
+
+  public String getBlockchain() {
+    return blockchain;
+  }
+
+  public void setBlockchain(String blockchain) {
+    this.blockchain = blockchain;
   }
 
   public String getAsset() {
@@ -32,7 +45,7 @@ public class WalletId implements Serializable {
   }
 
   public void setAsset(String asset) {
-    this.asset = asset;
+    this.asset = requireNonNull(asset);
   }
 
   public String getAddress() {
@@ -40,7 +53,7 @@ public class WalletId implements Serializable {
   }
 
   public void setAddress(String address) {
-    this.address = address;
+    this.address = requireNonNull(address);
   }
 
   @Override
@@ -52,13 +65,14 @@ public class WalletId implements Serializable {
       return false;
     }
     WalletId entity = (WalletId) o;
-    return Objects.equals(this.address, entity.address) &&
+    return Objects.equals(this.blockchain, entity.blockchain) &&
+        Objects.equals(this.address, entity.address) &&
         Objects.equals(this.asset, entity.asset);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(address, asset);
+    return Objects.hash(blockchain, address, asset);
   }
 
 }

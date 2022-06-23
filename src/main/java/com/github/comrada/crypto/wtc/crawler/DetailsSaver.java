@@ -24,13 +24,13 @@ public class DetailsSaver {
   public void save(Long alertId, TransactionDetail dto) {
     AlertDetail alertDetail = createAlertDetail(alertId, dto);
     alertDetailRepository.save(alertDetail);
-    saveWallet(dto.asset(), dto.fromWallet(), dto.fromName());
-    saveWallet(dto.asset(), dto.toWallet(), dto.toName());
+    saveWallet(dto.blockchain(), dto.asset(), dto.fromWallet(), dto.fromName());
+    saveWallet(dto.blockchain(), dto.asset(), dto.toWallet(), dto.toName());
   }
 
-  private void saveWallet(String asset, String address, String walletName) {
+  private void saveWallet(String blockchain, String asset, String address, String walletName) {
     if (address != null && !addressExclusions.contains(address)) {
-      walletRepository.addWallet(asset, address, isExchange(walletName));
+      walletRepository.addWallet(blockchain, asset, address, isExchange(walletName));
     }
   }
 

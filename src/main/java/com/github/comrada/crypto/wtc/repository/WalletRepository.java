@@ -15,19 +15,20 @@ public interface WalletRepository extends JpaRepository<Wallet, WalletId> {
   @Transactional
   @Modifying(flushAutomatically = true)
   @Query(value = """
-      insert into wallets (asset, address, exchange)
-      values (:#{#wallet.id.asset}, :#{#wallet.id.address}, :#{#wallet.exchange})
+      insert into wallets (blockchain, asset, address, exchange, locked)
+      values (:#{#wallet.id.blockchain}, :#{#wallet.id.asset}, :#{#wallet.id.address}, :#{#wallet.exchange}, false)
       """, nativeQuery = true)
   void addWallet(Wallet wallet);
 
-  default void addWallet(String asset, String address) {
-    addWallet(asset, address, null);
+  default void addWallet(String blockchain, String asset, String address) {
+    addWallet(blockchain, asset, address, null);
   }
 
-  default void addWallet(String asset, String address, Boolean isExchange) {
-    if (StringUtils.hasText(asset) && StringUtils.hasText(address)) {
+  default void addWallet(String blockchain, String asset, String address, Boolean isExchange) {
+    if (StringUtils.hasText(blockchain) && StringUtils.hasText(asset) && StringUtils.hasText(address)) {
       Wallet wallet = new Wallet();
       WalletId id = WalletId.builder()
+          .blockchain(blockchain)
           .asset(asset)
           .address(address)
           .build();

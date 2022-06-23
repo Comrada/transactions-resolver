@@ -16,7 +16,7 @@ import javax.persistence.UniqueConstraint;
         @Index(name = "IDX_CHECKED_AT", columnList = "checked_at"),
         @Index(name = "IDX_BALANCE", columnList = "balance")
     },
-    uniqueConstraints = @UniqueConstraint(columnNames = {"asset", "address"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"blockchain", "asset", "address"})
 )
 public class Wallet {
 
@@ -31,6 +31,8 @@ public class Wallet {
 
   @Column
   private Boolean exchange;
+  @Column
+  private Boolean locked = false;
 
   public Wallet() {
   }
@@ -65,6 +67,14 @@ public class Wallet {
 
   public void setExchange(Boolean exchange) {
     this.exchange = exchange;
+  }
+
+  public Boolean isLocked() {
+    return locked;
+  }
+
+  public void setLocked(Boolean locked) {
+    this.locked = locked;
   }
 
   @Override
