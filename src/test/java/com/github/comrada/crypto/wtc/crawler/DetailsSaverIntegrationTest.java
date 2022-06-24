@@ -33,23 +33,23 @@ class DetailsSaverIntegrationTest {
   @Test
   void save() {
     TransactionDetail dto = mockTransactionDetail();
-    AlertDetail alertDetail = mockAlertDetail(1L, dto);
+    AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.asset(), dto.toWallet(), false);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.asset(), dto.fromWallet(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), false);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), true);
   }
 
   @Test
   void whenWalletHasMultipleAddresses_thenItIsNotSaved() {
     TransactionDetail dto = mockMultiAddressTransactionDetail();
-    AlertDetail alertDetail = mockAlertDetail(1L, dto);
+    AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.asset(), dto.toWallet(), false);
-    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.asset(), dto.fromWallet(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), false);
+    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), true);
   }
 
   private TransactionDetail mockTransactionDetail() {
@@ -90,9 +90,9 @@ class DetailsSaverIntegrationTest {
     );
   }
 
-  private AlertDetail mockAlertDetail(Long id, TransactionDetail dto) {
+  private AlertDetail mockAlertDetail(TransactionDetail dto) {
     AlertDetail entity = new AlertDetail();
-    entity.setId(id);
+    entity.setId(1L);
     entity.setBlockchain(dto.blockchain());
     entity.setType(dto.type());
     entity.setAmount(dto.amount());

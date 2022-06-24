@@ -81,14 +81,12 @@ class WhaleAlertCrawlerIntegrationTest {
 
     WalletId fromWalletId = WalletId.builder()
         .blockchain(transactionDetailMock.blockchain())
-        .asset(transactionDetailMock.asset())
         .address(transactionDetailMock.fromWallet())
         .build();
     Optional<Wallet> fromWalletRecord = walletRepository.findById(fromWalletId);
     assertTrue(fromWalletRecord.isPresent());
     WalletId toWalletId = WalletId.builder()
         .blockchain(transactionDetailMock.blockchain())
-        .asset(transactionDetailMock.asset())
         .address(transactionDetailMock.toWallet())
         .build();
     Optional<Wallet> toWalletRecord = walletRepository.findById(toWalletId);
@@ -97,11 +95,9 @@ class WhaleAlertCrawlerIntegrationTest {
     Wallet fromWallet = fromWalletRecord.get();
     Wallet toWallet = toWalletRecord.get();
 
-    assertEquals(transactionDetailMock.asset(), fromWallet.getId().getAsset());
     assertEquals(transactionDetailMock.fromWallet(), fromWallet.getId().getAddress());
     assertTrue(fromWallet.isExchange());
 
-    assertEquals(transactionDetailMock.asset(), toWallet.getId().getAsset());
     assertEquals(transactionDetailMock.toWallet(), toWallet.getId().getAddress());
     assertFalse(toWallet.isExchange());
   }

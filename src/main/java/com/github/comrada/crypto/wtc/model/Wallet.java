@@ -16,7 +16,7 @@ import javax.persistence.UniqueConstraint;
         @Index(name = "IDX_CHECKED_AT", columnList = "checked_at"),
         @Index(name = "IDX_BALANCE", columnList = "balance")
     },
-    uniqueConstraints = @UniqueConstraint(columnNames = {"blockchain", "asset", "address"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"blockchain", "address"})
 )
 public class Wallet {
 

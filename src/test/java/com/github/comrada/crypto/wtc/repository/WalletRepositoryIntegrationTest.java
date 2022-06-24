@@ -30,14 +30,13 @@ class WalletRepositoryIntegrationTest {
   void addWalletDoesNotChangeExistingRecord() {
     WalletId id = WalletId.builder()
         .blockchain("Ripple")
-        .asset("XRP")
         .address("rfTjtcvf4mBLP5hpD38RjtdAFTZdr31uiY")
         .build();
 
     Optional<Wallet> item1 = repository.findById(id);
     assertTrue(item1.isPresent());
     Wallet wallet1 = item1.get();
-    repository.addWallet("Ripple", "XRP", "rfTjtcvf4mBLP5hpD38RjtdAFTZdr31uiY");
+    repository.addWallet("Ripple", "rfTjtcvf4mBLP5hpD38RjtdAFTZdr31uiY");
     Optional<Wallet> item12 = repository.findById(id);
     assertTrue(item12.isPresent());
     Wallet wallet12 = item12.get();
@@ -50,12 +49,11 @@ class WalletRepositoryIntegrationTest {
   void addWallet() {
     WalletId id = WalletId.builder()
         .blockchain("Ripple")
-        .asset("XRP")
         .address("rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg")
         .build();
     Wallet expected = new Wallet();
     expected.setId(id);
-    repository.addWallet("Ripple", "XRP", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg");
+    repository.addWallet("Ripple", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg");
 
     Optional<Wallet> item = repository.findById(id);
     assertTrue(item.isPresent());
@@ -65,7 +63,7 @@ class WalletRepositoryIntegrationTest {
 
   @Test
   void emptyAssetIsNotStored() {
-    repository.addWallet("Ripple", "", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg");
+    repository.addWallet("", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg");
 
     List<Wallet> wallets = repository.findAll();
     assertTrue(wallets.isEmpty());
@@ -73,7 +71,7 @@ class WalletRepositoryIntegrationTest {
 
   @Test
   void emptyAddressIsNotStored() {
-    repository.addWallet("Ripple", "XRP", "");
+    repository.addWallet("Ripple", "");
 
     List<Wallet> wallets = repository.findAll();
     assertTrue(wallets.isEmpty());
@@ -83,12 +81,11 @@ class WalletRepositoryIntegrationTest {
   void addWalletWithExchange() {
     WalletId id = WalletId.builder()
         .blockchain("Ripple")
-        .asset("XRP")
         .address("rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg")
         .build();
     Wallet expected = new Wallet();
     expected.setId(id);
-    repository.addWallet("Ripple", "XRP", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", true);
+    repository.addWallet("Ripple", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", true);
 
     Optional<Wallet> item = repository.findById(id);
     assertTrue(item.isPresent());

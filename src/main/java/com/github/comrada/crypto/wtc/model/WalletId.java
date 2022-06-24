@@ -17,8 +17,6 @@ public class WalletId implements Serializable {
   private static final long serialVersionUID = 1375066493278443982L;
   @Column(nullable = false, length = 32)
   private String blockchain;
-  @Column(nullable = false, length = 8)
-  private String asset;
 
   @Column(nullable = false, length = 64)
   private String address;
@@ -26,9 +24,8 @@ public class WalletId implements Serializable {
   public WalletId() {
   }
 
-  public WalletId(String blockchain, String asset, String address) {
+  public WalletId(String blockchain, String address) {
     this.blockchain = requireNonNull(blockchain);
-    this.asset = requireNonNull(asset);
     this.address = requireNonNull(address);
   }
 
@@ -38,14 +35,6 @@ public class WalletId implements Serializable {
 
   public void setBlockchain(String blockchain) {
     this.blockchain = blockchain;
-  }
-
-  public String getAsset() {
-    return asset;
-  }
-
-  public void setAsset(String asset) {
-    this.asset = requireNonNull(asset);
   }
 
   public String getAddress() {
@@ -66,13 +55,11 @@ public class WalletId implements Serializable {
     }
     WalletId entity = (WalletId) o;
     return Objects.equals(this.blockchain, entity.blockchain) &&
-        Objects.equals(this.address, entity.address) &&
-        Objects.equals(this.asset, entity.asset);
+        Objects.equals(this.address, entity.address);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(blockchain, address, asset);
+    return Objects.hash(blockchain, address);
   }
-
 }
