@@ -6,6 +6,8 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -14,9 +16,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "wallets",
     indexes = {
         @Index(name = "IDX_CHECKED_AT", columnList = "checked_at"),
-        @Index(name = "IDX_BALANCE", columnList = "balance")
+        @Index(name = "IDX_BALANCE", columnList = "balance"),
+        @Index(name = "IDX_STATUS", columnList = "status")
     },
-    uniqueConstraints = @UniqueConstraint(columnNames = {"blockchain", "address"})
+    uniqueConstraints = @UniqueConstraint(columnNames = {"blockchain", "address", "asset"})
 )
 public class Wallet {
 
@@ -30,9 +33,13 @@ public class Wallet {
   private Instant checkedAt;
 
   @Column
-  private Boolean exchange;
+  private boolean exchange;
   @Column
-  private Boolean locked = false;
+  private boolean locked = false;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false, length = 16)
+  private WalletStatus status = WalletStatus.OK;
 
   public Wallet() {
   }
@@ -61,20 +68,28 @@ public class Wallet {
     this.checkedAt = checkedAt;
   }
 
-  public Boolean isExchange() {
+  public boolean isExchange() {
     return exchange;
   }
 
-  public void setExchange(Boolean exchange) {
+  public void setExchange(boolean exchange) {
     this.exchange = exchange;
   }
 
-  public Boolean isLocked() {
+  public boolean isLocked() {
     return locked;
   }
 
-  public void setLocked(Boolean locked) {
+  public void setLocked(boolean locked) {
     this.locked = locked;
+  }
+
+  public WalletStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(WalletStatus status) {
+    this.status = status;
   }
 
   @Override

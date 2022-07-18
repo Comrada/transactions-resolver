@@ -4,10 +4,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.github.comrada.crypto.wtc.dto.TransactionDetail;
 import com.github.comrada.crypto.wtc.model.AlertDetail;
 import com.github.comrada.crypto.wtc.repository.AlertDetailRepository;
 import com.github.comrada.crypto.wtc.repository.WalletRepository;
-import com.github.comrada.crypto.wtc.dto.TransactionDetail;
 import java.math.BigDecimal;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +37,8 @@ class DetailsSaverIntegrationTest {
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), false);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true);
   }
 
   @Test
@@ -48,8 +48,8 @@ class DetailsSaverIntegrationTest {
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), false);
-    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false);
+    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true);
   }
 
   private TransactionDetail mockTransactionDetail() {
