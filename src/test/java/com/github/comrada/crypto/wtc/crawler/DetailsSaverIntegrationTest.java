@@ -32,13 +32,13 @@ class DetailsSaverIntegrationTest {
 
   @Test
   void save() {
-    TransactionDetail dto = mockTransactionDetail();
+    TransactionDetail dto = mockTransactionDetailWithNativeAsset();
     AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), true, false);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), false, false);
   }
 
   @Test
@@ -48,11 +48,22 @@ class DetailsSaverIntegrationTest {
     detailsSaver.save(1L, dto);
 
     verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false);
-    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false, false);
+    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true, false);
   }
 
-  private TransactionDetail mockTransactionDetail() {
+  @Test
+  void whenNotNativeAssetIsUsed_thenWalletSavedAsToken() {
+    TransactionDetail dto = mockTransactionDetailWithNotNativeAsset();
+    AlertDetail alertDetail = mockAlertDetail(dto);
+    detailsSaver.save(1L, dto);
+
+    verify(alertRepository, times(1)).save(alertDetail);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false, true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true, true);
+  }
+
+  private TransactionDetail mockTransactionDetailWithNotNativeAsset() {
     return new TransactionDetail(
         "Ethereum",
         "Transfer",
@@ -71,12 +82,31 @@ class DetailsSaverIntegrationTest {
     );
   }
 
+  private TransactionDetail mockTransactionDetailWithNativeAsset() {
+    return new TransactionDetail(
+        "Ethereum",
+        "Transfer",
+        BigDecimal.valueOf(50409.99),
+        "ETH",
+        BigDecimal.valueOf(79159430, 2),
+        Instant.parse("2022-07-21T22:35:07Z"),
+        "0x9b0e644ef0fe67b6db4af88b15922c5964c0a7a0fb3d0a7cb108ee0ff18a8094",
+        "https://etherscan.io/tx/0x9b0e644ef0fe67b6db4af88b15922c5964c0a7a0fb3d0a7cb108ee0ff18a8094",
+        "0x366064cc2baa69ff0bb0dd7dd07cb266e5105759",
+        "Unknown",
+        "https://etherscan.io/address/366064cc2baa69ff0bb0dd7dd07cb266e5105759",
+        "0xc098b2a3aa256d2140208c3de6543aaef5cd3a94",
+        "Ftx (Exchange)",
+        "https://etherscan.io/address/c098b2a3aa256d2140208c3de6543aaef5cd3a94"
+    );
+  }
+
   private TransactionDetail mockMultiAddressTransactionDetail() {
     return new TransactionDetail(
         "Ethereum",
         "Transfer",
         BigDecimal.valueOf(2999.38),
-        "PAXG",
+        "ETH",
         BigDecimal.valueOf(5392568, 2),
         Instant.parse("2021-12-20T10:03:35Z"),
         "0x1dace3b2d84e6e0372f323afba5c414156d7c0c72509e3be16eae63985612db9",

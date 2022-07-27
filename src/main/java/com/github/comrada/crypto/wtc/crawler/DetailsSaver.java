@@ -15,10 +15,12 @@ public class DetailsSaver {
   );
   private final AlertDetailRepository alertDetailRepository;
   private final WalletRepository walletRepository;
+  private final TokenDeterminer tokenDeterminer;
 
   public DetailsSaver(AlertDetailRepository alertDetailRepository, WalletRepository walletRepository) {
     this.alertDetailRepository = requireNonNull(alertDetailRepository);
     this.walletRepository = requireNonNull(walletRepository);
+    this.tokenDeterminer = new TokenDeterminer();
   }
 
   public void save(Long alertId, TransactionDetail dto) {
@@ -30,7 +32,8 @@ public class DetailsSaver {
 
   private void saveWallet(String blockchain, String address, String asset, String walletName) {
     if (address != null && !addressExclusions.contains(address)) {
-      walletRepository.addWallet(blockchain, address, asset, isExchange(walletName));
+      walletRepository.addWallet(blockchain, address, asset, isExchange(walletName),
+          tokenDeterminer.isToken(blockchain, asset));
     }
   }
 

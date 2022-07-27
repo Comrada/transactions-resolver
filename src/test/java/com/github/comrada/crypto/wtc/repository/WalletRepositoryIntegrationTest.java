@@ -88,7 +88,7 @@ class WalletRepositoryIntegrationTest {
         .build();
     Wallet expected = new Wallet();
     expected.setId(id);
-    repository.addWallet("Ripple", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", "XRP", true);
+    repository.addWallet("Ripple", "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", "XRP", true, false);
 
     Optional<Wallet> item = repository.findById(id);
     assertTrue(item.isPresent());
