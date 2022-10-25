@@ -1,5 +1,17 @@
 package com.github.comrada.crypto.wtc.crawler;
 
+import static com.github.comrada.crypto.wtc.TestUtils.amount;
+import static com.github.comrada.crypto.wtc.TestUtils.asset;
+import static com.github.comrada.crypto.wtc.TestUtils.fromName;
+import static com.github.comrada.crypto.wtc.TestUtils.fromWallet;
+import static com.github.comrada.crypto.wtc.TestUtils.fromWalletUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.toName;
+import static com.github.comrada.crypto.wtc.TestUtils.toWallet;
+import static com.github.comrada.crypto.wtc.TestUtils.toWalletUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.transactionUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.type;
+import static com.github.comrada.crypto.wtc.TestUtils.usdAmount;
+import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -36,9 +48,9 @@ class DetailsSaverIntegrationTest {
     AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
-    verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), true, false);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), false, false);
+    verify(alertRepository, times(1)).saveAll(singletonList(alertDetail));
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), toWallet(dto), asset(dto), true, false);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), fromWallet(dto), asset(dto), false, false);
   }
 
   @Test
@@ -47,9 +59,9 @@ class DetailsSaverIntegrationTest {
     AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
-    verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false, false);
-    verify(walletRepository, never()).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true, false);
+    verify(alertRepository, times(1)).saveAll(singletonList(alertDetail));
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), toWallet(dto), asset(dto), false, false);
+    verify(walletRepository, never()).addWallet(dto.blockchain(), fromWallet(dto), asset(dto), true, false);
   }
 
   @Test
@@ -58,9 +70,9 @@ class DetailsSaverIntegrationTest {
     AlertDetail alertDetail = mockAlertDetail(dto);
     detailsSaver.save(1L, dto);
 
-    verify(alertRepository, times(1)).save(alertDetail);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.toWallet(), dto.asset(), false, true);
-    verify(walletRepository, times(1)).addWallet(dto.blockchain(), dto.fromWallet(), dto.asset(), true, true);
+    verify(alertRepository, times(1)).saveAll(singletonList(alertDetail));
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), toWallet(dto), asset(dto), false, true);
+    verify(walletRepository, times(1)).addWallet(dto.blockchain(), fromWallet(dto), asset(dto), true, true);
   }
 
   private TransactionDetail mockTransactionDetailWithNotNativeAsset() {
@@ -124,19 +136,19 @@ class DetailsSaverIntegrationTest {
     AlertDetail entity = new AlertDetail();
     entity.setId(1L);
     entity.setBlockchain(dto.blockchain());
-    entity.setType(dto.type());
-    entity.setAmount(dto.amount());
-    entity.setAsset(dto.asset() != null ? dto.asset().toUpperCase() : null);
-    entity.setUsdAmount(dto.usdAmount());
+    entity.setType(type(dto));
+    entity.setAmount(amount(dto));
+    entity.setAsset(asset(dto) != null ? asset(dto).toUpperCase() : null);
+    entity.setUsdAmount(usdAmount(dto));
     entity.setTimestamp(dto.timestamp());
     entity.setHash(dto.hash());
-    entity.setTransactionUrl(dto.transactionUrl());
-    entity.setFromWallet(dto.fromWallet());
-    entity.setFromName(dto.fromName());
-    entity.setFromWalletUrl(dto.fromWalletUrl());
-    entity.setToWallet(dto.toWallet());
-    entity.setToName(dto.toName());
-    entity.setToWalletUrl(dto.toWalletUrl());
+    entity.setTransactionUrl(transactionUrl(dto));
+    entity.setFromWallet(fromWallet(dto));
+    entity.setFromName(fromName(dto));
+    entity.setFromWalletUrl(fromWalletUrl(dto));
+    entity.setToWallet(toWallet(dto));
+    entity.setToName(toName(dto));
+    entity.setToWalletUrl(toWalletUrl(dto));
     return entity;
   }
 }

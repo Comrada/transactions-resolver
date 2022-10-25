@@ -1,5 +1,16 @@
 package com.github.comrada.crypto.wtc.crawler;
 
+import static com.github.comrada.crypto.wtc.TestUtils.amount;
+import static com.github.comrada.crypto.wtc.TestUtils.asset;
+import static com.github.comrada.crypto.wtc.TestUtils.fromName;
+import static com.github.comrada.crypto.wtc.TestUtils.fromWallet;
+import static com.github.comrada.crypto.wtc.TestUtils.fromWalletUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.toName;
+import static com.github.comrada.crypto.wtc.TestUtils.toWallet;
+import static com.github.comrada.crypto.wtc.TestUtils.toWalletUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.transactionUrl;
+import static com.github.comrada.crypto.wtc.TestUtils.type;
+import static com.github.comrada.crypto.wtc.TestUtils.usdAmount;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,16 +18,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.github.comrada.crypto.wtc.dto.TransactionDetail;
 import com.github.comrada.crypto.wtc.model.AlertDetail;
 import com.github.comrada.crypto.wtc.model.Wallet;
+import com.github.comrada.crypto.wtc.model.WalletId;
+import com.github.comrada.crypto.wtc.model.WhaleAlert;
+import com.github.comrada.crypto.wtc.model.WhaleAlert.ProcessingStatus;
 import com.github.comrada.crypto.wtc.repository.AlertDetailRepository;
 import com.github.comrada.crypto.wtc.repository.WalletRepository;
 import com.github.comrada.crypto.wtc.resolver.TransactionLoader;
 import com.github.comrada.crypto.wtc.resolver.parser.ResponseParser;
-import com.github.comrada.crypto.wtc.dto.TransactionDetail;
-import com.github.comrada.crypto.wtc.model.WalletId;
-import com.github.comrada.crypto.wtc.model.WhaleAlert;
-import com.github.comrada.crypto.wtc.model.WhaleAlert.ProcessingStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
@@ -65,31 +76,31 @@ class WhaleAlertCrawlerIntegrationTest {
 
     assertEquals(whaleAlertMock.getId(), alertDetail.getId());
     assertEquals(transactionDetailMock.blockchain(), alertDetail.getBlockchain());
-    assertEquals(transactionDetailMock.type(), alertDetail.getType());
-    assertEquals(transactionDetailMock.amount(), alertDetail.getAmount());
-    assertEquals(transactionDetailMock.asset(), alertDetail.getAsset());
-    assertEquals(transactionDetailMock.usdAmount(), alertDetail.getUsdAmount());
+    assertEquals(type(transactionDetailMock), alertDetail.getType());
+    assertEquals(amount(transactionDetailMock), alertDetail.getAmount());
+    assertEquals(asset(transactionDetailMock), alertDetail.getAsset());
+    assertEquals(usdAmount(transactionDetailMock), alertDetail.getUsdAmount());
     assertEquals(transactionDetailMock.timestamp(), alertDetail.getTimestamp());
     assertEquals(transactionDetailMock.hash(), alertDetail.getHash());
-    assertEquals(transactionDetailMock.transactionUrl(), alertDetail.getTransactionUrl());
-    assertEquals(transactionDetailMock.fromWallet(), alertDetail.getFromWallet());
-    assertEquals(transactionDetailMock.fromName(), alertDetail.getFromName());
-    assertEquals(transactionDetailMock.fromWalletUrl(), alertDetail.getFromWalletUrl());
-    assertEquals(transactionDetailMock.toWallet(), alertDetail.getToWallet());
-    assertEquals(transactionDetailMock.toName(), alertDetail.getToName());
-    assertEquals(transactionDetailMock.toWalletUrl(), alertDetail.getToWalletUrl());
+    assertEquals(transactionUrl(transactionDetailMock), alertDetail.getTransactionUrl());
+    assertEquals(fromWallet(transactionDetailMock), alertDetail.getFromWallet());
+    assertEquals(fromName(transactionDetailMock), alertDetail.getFromName());
+    assertEquals(fromWalletUrl(transactionDetailMock), alertDetail.getFromWalletUrl());
+    assertEquals(toWallet(transactionDetailMock), alertDetail.getToWallet());
+    assertEquals(toName(transactionDetailMock), alertDetail.getToName());
+    assertEquals(toWalletUrl(transactionDetailMock), alertDetail.getToWalletUrl());
 
     WalletId fromWalletId = WalletId.builder()
         .blockchain(transactionDetailMock.blockchain())
-        .address(transactionDetailMock.fromWallet())
-        .asset(transactionDetailMock.asset())
+        .address(fromWallet(transactionDetailMock))
+        .asset(asset(transactionDetailMock))
         .build();
     Optional<Wallet> fromWalletRecord = walletRepository.findById(fromWalletId);
     assertTrue(fromWalletRecord.isPresent());
     WalletId toWalletId = WalletId.builder()
         .blockchain(transactionDetailMock.blockchain())
-        .address(transactionDetailMock.toWallet())
-        .asset(transactionDetailMock.asset())
+        .address(toWallet(transactionDetailMock))
+        .asset(asset(transactionDetailMock))
         .build();
     Optional<Wallet> toWalletRecord = walletRepository.findById(toWalletId);
     assertTrue(toWalletRecord.isPresent());
@@ -97,20 +108,20 @@ class WhaleAlertCrawlerIntegrationTest {
     Wallet fromWallet = fromWalletRecord.get();
     Wallet toWallet = toWalletRecord.get();
 
-    assertEquals(transactionDetailMock.fromWallet(), fromWallet.getId().getAddress());
+    assertEquals(fromWallet(transactionDetailMock), fromWallet.getId().getAddress());
     assertTrue(fromWallet.isExchange());
 
-    assertEquals(transactionDetailMock.toWallet(), toWallet.getId().getAddress());
+    assertEquals(toWallet(transactionDetailMock), toWallet.getId().getAddress());
     assertFalse(toWallet.isExchange());
   }
 
   private WhaleAlert mockAlert() {
     WhaleAlert alert = new WhaleAlert();
     alert.setId(1L);
-    alert.setAmount(transactionDetailMock.amount());
+    alert.setAmount(amount(transactionDetailMock));
     alert.setMessage("fake message");
     alert.setLink("https://fakeurl.com");
-    alert.setAsset(transactionDetailMock.asset());
+    alert.setAsset(asset(transactionDetailMock));
     alert.setProcessStatus(ProcessingStatus.NEW);
     alert.setPostedAt(transactionDetailMock.timestamp());
     return alert;

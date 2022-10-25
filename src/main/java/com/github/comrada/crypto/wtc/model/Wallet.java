@@ -35,6 +35,7 @@ public class Wallet {
 
   @Column
   private boolean exchange;
+
   @Column
   private boolean locked = false;
 
@@ -130,5 +131,11 @@ public class Wallet {
   @Override
   public int hashCode() {
     return Objects.hash(id);
+  }
+
+  @Override
+  public String toString() {
+    return "Blockchain: " + id.getBlockchain() + ", address: " + id.getAddress() + ", asset: " + id.getAsset() +
+        (balance != null ? ", balance: " + balance : "");
   }
 }

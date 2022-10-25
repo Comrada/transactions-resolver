@@ -5,6 +5,7 @@ import static com.github.comrada.crypto.wtc.resolver.parser.html.HtmlUtils.selec
 import static java.util.Objects.requireNonNull;
 
 import com.github.comrada.crypto.wtc.dto.TransactionDetail;
+import com.github.comrada.crypto.wtc.dto.TransactionItem;
 import com.github.comrada.crypto.wtc.resolver.TransactionLoader;
 import com.github.comrada.crypto.wtc.resolver.parser.ResponseParser;
 import com.github.comrada.crypto.wtc.resolver.parser.TransactionTableParser;
@@ -45,12 +46,12 @@ public class NftSaleParser extends BaseTableParser implements TransactionTablePa
         parseTimestamp(rows.get("Timestamp")),
         parseAddress(rows.get("Tx Hash")),
         parseUrl(rows.get("Tx Hash")),
-        transactionDetail.fromWallet(),
+        transactionDetail.items().stream().findFirst().map(TransactionItem::fromWallet).orElse(null),
         parseDivText(rows.get("Collection")),
-        transactionDetail.fromWalletUrl(),
-        transactionDetail.toWallet(),
+        transactionDetail.items().stream().findFirst().map(TransactionItem::fromWalletUrl).orElse(null),
+        transactionDetail.items().stream().findFirst().map(TransactionItem::toWallet).orElse(null),
         parseBuyerName(rows.get("Buyer")),
-        transactionDetail.toWalletUrl()
+        transactionDetail.items().stream().findFirst().map(TransactionItem::toWalletUrl).orElse(null)
     );
   }
 
