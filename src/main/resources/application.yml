@@ -1,4 +1,5 @@
 app:
+  wa-api-key: ${APP_WA_API_KEY}
   execution:
     max-retry-attempts: ${APP_EXEC_MAX_RETRIES:3}
     database:

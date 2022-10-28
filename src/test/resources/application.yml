@@ -1,3 +1,6 @@
+app:
+  wa-api-key: fakeKey
+
 spring:
   profiles:
     active: test

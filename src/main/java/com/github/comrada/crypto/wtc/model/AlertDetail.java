@@ -7,7 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = "alert_details")
 public class AlertDetail {
@@ -57,6 +61,9 @@ public class AlertDetail {
 
   @Column
   private String toWalletUrl;
+
+  public AlertDetail() {
+  }
 
   public Long getId() {
     return id;

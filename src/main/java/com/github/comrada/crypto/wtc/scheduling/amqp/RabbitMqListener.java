@@ -12,7 +12,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.util.StringUtils;
 
 public final class RabbitMqListener {
 
@@ -28,7 +27,7 @@ public final class RabbitMqListener {
   @RabbitListener(queues = {"#{whalesQueue.getName()}"})
   public void listen(List<NewAlertEvent> event) {
     event.stream()
-        .filter(alert -> StringUtils.hasText(alert.link()))
+        .filter(alert -> alert.link() != null && alert.link().startsWith("https://"))
         .forEach(alert -> {
           LOGGER.info("New alert with id: {} received, asset: {}", alert.id(), alert.asset());
           doExecution(alert);

@@ -1,8 +1,7 @@
 package com.github.comrada.crypto.wtc.resolver.http;
 
-import com.github.comrada.crypto.wtc.resolver.TransactionLoader;
+import com.github.comrada.crypto.wtc.resolver.HttpClient;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -10,13 +9,17 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.brotli.BrotliInterceptor;
 
-public class OkHttpLoader implements TransactionLoader {
+public class OkHttpLoader implements HttpClient {
 
   private final Headers headers;
   private final OkHttpClient client;
 
   public OkHttpLoader() {
-    headers = buildRequestHeaders();
+    this(buildRequestHeaders());
+  }
+
+  public OkHttpLoader(Map<String, String> additionalHeaders) {
+    headers = Headers.of(additionalHeaders);
     client = new OkHttpClient.Builder()
         .followRedirects(true)
         .retryOnConnectionFailure(true)
@@ -30,10 +33,12 @@ public class OkHttpLoader implements TransactionLoader {
     try (Response response = client.newCall(request).execute()) {
       if (response.isSuccessful()) {
         return response.body().string();
+      } else if (response.code() == 404) {
+        throw new ResourceNotFoundException("Page %s not found".formatted(transactionUrl));
       }
-      throw new IllegalStateException("HTTP Request failed");
+      throw new UncheckedHttpException("Unexpected HTTP status %d for %s".formatted(response.code(), transactionUrl));
     } catch (IOException e) {
-      throw new UncheckedIOException(e);
+      throw new UncheckedHttpException("Requesting of %s failed".formatted(transactionUrl), e);
     }
   }
 
@@ -45,8 +50,8 @@ public class OkHttpLoader implements TransactionLoader {
         .build();
   }
 
-  private Headers buildRequestHeaders() {
-    return Headers.of(Map.of(
+  private static Map<String, String> buildRequestHeaders() {
+    return Map.of(
         "Cache-Control", "no-cache",
         "Pragma", "no-cache",
         "Sec-Fetch-Dest", "document",
@@ -57,6 +62,6 @@ public class OkHttpLoader implements TransactionLoader {
         "upgrade-insecure-requests", "1",
         "User-Agent",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36"
-    ));
+    );
   }
 }

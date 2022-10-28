@@ -56,7 +56,7 @@ class RabbitMqListenerIntegrationTest {
     NewAlertEvent event = new NewAlertEvent(
         1L,
         "fake message",
-        "http://fake-url",
+        "https://fake-url",
         ZonedDateTime.now(),
         "BTC",
         BigDecimal.valueOf(100)
@@ -76,7 +76,7 @@ class RabbitMqListenerIntegrationTest {
     NewAlertEvent event = new NewAlertEvent(
         1L,
         "fake message",
-        "http://fake-url",
+        "https://fake-url",
         ZonedDateTime.now(),
         "BTC",
         BigDecimal.valueOf(100)
@@ -98,7 +98,7 @@ class RabbitMqListenerIntegrationTest {
     NewAlertEvent event = new NewAlertEvent(
         1L,
         "fake message",
-        "http://fake-url",
+        "https://fake-url",
         ZonedDateTime.now(),
         "BTC",
         BigDecimal.valueOf(100)

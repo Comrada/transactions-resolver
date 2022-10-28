@@ -5,9 +5,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.github.comrada.crypto.wtc.model.WhaleAlert;
 import com.github.comrada.crypto.wtc.repository.WhaleAlertRepository;
 import com.github.comrada.crypto.wtc.scheduling.TaskExecutor;
-import com.github.comrada.crypto.wtc.model.WhaleAlert;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,9 @@ class DatabasePollerIntegrationTest {
   void test() {
     WhaleAlert whaleAlert = new WhaleAlert();
     whaleAlert.setId(1L);
+    whaleAlert.setLink("https://fake-url.com");
     when(repository.selectForExecution()).thenReturn(Optional.of(whaleAlert));
-    DatabasePoller databasePoller = new DatabasePoller(repository, 0, 0, taskExecutor);
+    DatabasePoller databasePoller = new DatabasePoller(repository, 0, 0, taskExecutor, new DelayGenerator(1, 10));
 
     await()
         .atMost(5, TimeUnit.SECONDS)

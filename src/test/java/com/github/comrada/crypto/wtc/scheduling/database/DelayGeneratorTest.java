@@ -1,6 +1,6 @@
 package com.github.comrada.crypto.wtc.scheduling.database;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.RepeatedTest;
 

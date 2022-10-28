@@ -3,10 +3,10 @@ package com.github.comrada.crypto.wtc.scheduling.database;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 
+import com.github.comrada.crypto.wtc.model.WhaleAlert;
 import com.github.comrada.crypto.wtc.repository.WhaleAlertRepository;
 import com.github.comrada.crypto.wtc.scheduling.ExecutionException;
 import com.github.comrada.crypto.wtc.scheduling.TaskExecutor;
-import com.github.comrada.crypto.wtc.model.WhaleAlert;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,11 +24,11 @@ public class DatabasePoller {
   private final DelayGenerator delayGenerator;
 
   public DatabasePoller(WhaleAlertRepository alertRepository, long initialDelay, long noJobDelay,
-      TaskExecutor<WhaleAlert> taskExecutor) {
+      TaskExecutor<WhaleAlert> taskExecutor, DelayGenerator delayGenerator) {
     this.alertRepository = requireNonNull(alertRepository);
     this.taskExecutor = requireNonNull(taskExecutor);
     this.noJobDelay = noJobDelay;
-    this.delayGenerator = new DelayGenerator(1, 10);
+    this.delayGenerator = requireNonNull(delayGenerator);
     pollWithDelay(initialDelay);
     LOGGER.info("Database poller initialized. Initial delay: {}s, no-job delay: {}s", initialDelay,
         noJobDelay);
@@ -36,7 +36,7 @@ public class DatabasePoller {
 
   private void poll() {
     Optional<WhaleAlert> foundAlert = alertRepository.selectForExecution();
-    if (foundAlert.isPresent()) {
+    if (foundAlert.isPresent() && isLinkPresent(foundAlert.get())) {
       WhaleAlert whaleAlert = foundAlert.get();
       LOGGER.info("Start processing alert id: {}, asset: {}", whaleAlert.getId(),
           whaleAlert.getAsset());
@@ -49,6 +49,10 @@ public class DatabasePoller {
       LOGGER.debug("No new jobs, waiting for {}s...", noJobDelay);
       pollWithDelay(noJobDelay);
     }
+  }
+
+  private boolean isLinkPresent(WhaleAlert alert) {
+    return alert.getLink() != null && alert.getLink().startsWith("https://");
   }
 
   private void doExecution(WhaleAlert whaleAlert) {

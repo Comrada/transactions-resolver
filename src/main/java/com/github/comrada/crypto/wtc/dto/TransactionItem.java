@@ -10,8 +10,6 @@ public record TransactionItem(
     String transactionUrl,
     String fromWallet,
     String fromName,
-    String fromWalletUrl,
     String toWallet,
-    String toName,
-    String toWalletUrl
+    String toName
 ) {}

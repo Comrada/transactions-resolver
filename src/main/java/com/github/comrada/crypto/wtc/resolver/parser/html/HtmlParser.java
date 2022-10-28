@@ -1,27 +1,29 @@
 package com.github.comrada.crypto.wtc.resolver.parser.html;
 
+import static com.github.comrada.crypto.wtc.resolver.parser.html.HtmlUtils.parseUrl;
 import static com.github.comrada.crypto.wtc.resolver.parser.html.HtmlUtils.select;
-import static java.util.Objects.requireNonNull;
+import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
+import static java.util.Objects.isNull;
 import static java.util.stream.Collectors.toMap;
 
-import com.github.comrada.crypto.wtc.resolver.parser.TransactionTableParser;
 import com.github.comrada.crypto.wtc.dto.TransactionDetail;
 import com.github.comrada.crypto.wtc.resolver.parser.ResponseParser;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import org.jetbrains.annotations.NotNull;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 public class HtmlParser implements ResponseParser {
 
-  private static final String SELECTOR_DETAILS_TABLE_ROWS = "h1.color-primary ~ table.table>tbody>tr";
-  private final Map<String, TransactionTableParser> transactionTableParsers;
-
-  public HtmlParser(Map<String, TransactionTableParser> transactionTableParsers) {
-    this.transactionTableParsers = requireNonNull(transactionTableParsers);
-  }
+  private static final String SELECTOR_DETAILS_TABLE_ROWS = "h1.color-primary ~ table.table";
+  private static final String ADDRESS_BLOCK_V1 = "div>i>span.d-lg-block";
+  private static final String ADDRESS_BLOCK_V2 = "a>span.d-lg-block";
+  private static final Pattern PATTERN_TIMESTAMP =
+      Pattern.compile("\\(([a-zA-Z]{3},\\s\\d{1,2}\\s[a-zA-Z]{3}\\s[\\d\\s:]+(UTC|GMT))\\)$");
 
   @Override
   public TransactionDetail parse(String content) {
@@ -33,15 +35,17 @@ public class HtmlParser implements ResponseParser {
   }
 
   private List<Element> findTableRows(Document doc) {
-    return select(doc, SELECTOR_DETAILS_TABLE_ROWS).stream().toList();
+    Element table = select(doc, SELECTOR_DETAILS_TABLE_ROWS).stream().findFirst().orElseThrow();
+    return select(table, "tbody>tr").stream().toList();
   }
 
   private void assertTableContent(Map<String, Element> tableRows) {
-    String type = getTransactionType(tableRows);
-    TransactionTableParser tableParser = getTableParserForType(type);
-    if (!tableParser.supported(tableRows.keySet())) {
+    Element blockchain = tableRows.get("Blockchain");
+    Element hash = tableRows.get("Hash");
+    Element timestamp = tableRows.get("Timestamp");
+    if (isNull(blockchain) || isNull(hash) || isNull(timestamp)) {
       throw new IllegalArgumentException(
-          "Probably page structure has been changed, number of table rows not equals 6 or 7");
+          "Probably page structure has been changed, 'Blockchain', 'Hash' or 'Timestamp' columns not found");
     }
   }
 
@@ -70,27 +74,31 @@ public class HtmlParser implements ResponseParser {
   }
 
   private TransactionDetail buildFrom(Map<String, Element> values) {
-    String transactionType = getTransactionType(values);
-    TransactionTableParser tableParser = getTableParserForType(transactionType);
-    return tableParser.parse(values);
+    String blockchain = parseSingleStringValue(values.get("Blockchain"));
+    String hash = parseAddress(values.get("Hash"));
+    String transactionUrl = parseUrl(values.get("Hash"));
+    Instant timestamp = parseTimestamp(values.get("Timestamp"));
+    return new TransactionDetail(blockchain, timestamp, hash, transactionUrl);
   }
 
-  @NotNull
-  private String getTransactionType(Map<String, Element> tableRows) {
-    Element typeRow = tableRows.get("Type");
-    if (typeRow == null) {
-      throw new IllegalArgumentException("No 'Type' column, '%s' presented".formatted(
-          String.join(",", tableRows.keySet())));
-    }
-    return typeRow.text().trim();
+  private String parseSingleStringValue(Element row) {
+    return row.text().trim();
   }
 
-  @NotNull
-  private TransactionTableParser getTableParserForType(String transactionType) {
-    TransactionTableParser tableParser = transactionTableParsers.get(transactionType);
-    if (tableParser == null) {
-      throw new IllegalArgumentException("Unknown transaction type: " + transactionType);
+  private String parseAddress(Element walletRow) {
+    try {
+      return select(walletRow, ADDRESS_BLOCK_V1).text();
+    } catch (IllegalArgumentException e) {
+      return select(walletRow, ADDRESS_BLOCK_V2).stream().findFirst().orElseThrow().text();
     }
-    return tableParser;
+  }
+
+  private Instant parseTimestamp(Element timestampRow) {
+    String rowText = timestampRow.text();
+    Matcher matcher = PATTERN_TIMESTAMP.matcher(rowText);
+    if (matcher.find() && matcher.groupCount() >= 1) {
+      return RFC_1123_DATE_TIME.parse(matcher.group(1).replace("UTC", "GMT"), Instant::from);
+    }
+    throw new IllegalArgumentException("Timestamp doesn't have right format: " + rowText);
   }
 }

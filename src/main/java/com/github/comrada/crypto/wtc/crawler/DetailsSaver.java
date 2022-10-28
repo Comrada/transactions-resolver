@@ -3,6 +3,7 @@ package com.github.comrada.crypto.wtc.crawler;
 import static java.util.Objects.requireNonNull;
 
 import com.github.comrada.crypto.wtc.dto.TransactionDetail;
+import com.github.comrada.crypto.wtc.dto.TransactionItem;
 import com.github.comrada.crypto.wtc.model.AlertDetail;
 import com.github.comrada.crypto.wtc.repository.AlertDetailRepository;
 import com.github.comrada.crypto.wtc.repository.WalletRepository;
@@ -24,10 +25,12 @@ public class DetailsSaver {
     this.tokenDeterminer = new TokenDeterminer();
   }
 
-  public void save(Long alertId, TransactionDetail dto) {
-    List<AlertDetail> alertDetail = createAlertDetail(alertId, dto);
-    alertDetailRepository.saveAll(alertDetail);
-    saveWallets(alertDetail);
+  public void save(Long alertId, TransactionDetail dto, List<TransactionItem> transactionItems) {
+    if (!transactionItems.isEmpty()) {
+      List<AlertDetail> alertDetail = createAlertDetailEntity(alertId, dto, transactionItems);
+      alertDetailRepository.saveAll(alertDetail);
+      saveWallets(alertDetail);
+    }
   }
 
   private void saveWallets(List<AlertDetail> alertDetails) {
@@ -48,25 +51,22 @@ public class DetailsSaver {
     return walletName != null && walletName.toLowerCase().contains("exchange");
   }
 
-  private List<AlertDetail> createAlertDetail(Long id, TransactionDetail dto) {
-    return dto.items().stream().map(item -> {
-      AlertDetail entity = new AlertDetail();
-      entity.setId(id);
-      entity.setBlockchain(dto.blockchain());
-      entity.setTimestamp(dto.timestamp());
-      entity.setHash(dto.hash());
-      entity.setType(item.type());
-      entity.setAmount(item.amount());
-      entity.setAsset(item.asset() != null ? item.asset().toUpperCase() : null);
-      entity.setUsdAmount(item.usdAmount());
-      entity.setTransactionUrl(item.transactionUrl());
-      entity.setFromWallet(item.fromWallet());
-      entity.setFromName(item.fromName());
-      entity.setFromWalletUrl(item.fromWalletUrl());
-      entity.setToWallet(item.toWallet());
-      entity.setToName(item.toName());
-      entity.setToWalletUrl(item.toWalletUrl());
-      return entity;
-    }).toList();
+  private List<AlertDetail> createAlertDetailEntity(Long id, TransactionDetail dto, List<TransactionItem> transactionItems) {
+    return transactionItems.stream().map(item -> AlertDetail.builder()
+            .id(id)
+            .blockchain(dto.blockchain())
+            .timestamp(dto.timestamp())
+            .hash(dto.hash())
+            .type(item.type())
+            .amount(item.amount())
+            .asset(item.asset() != null ? item.asset().toUpperCase() : null)
+            .usdAmount(item.usdAmount())
+            .transactionUrl(item.transactionUrl())
+            .fromWallet(item.fromWallet())
+            .fromName(item.fromName())
+            .toWallet(item.toWallet())
+            .toName(item.toName())
+            .build())
+        .toList();
   }
 }
