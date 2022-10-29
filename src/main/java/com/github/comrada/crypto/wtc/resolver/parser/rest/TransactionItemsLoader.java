@@ -12,6 +12,7 @@ import com.github.comrada.crypto.wtc.resolver.parser.rest.StatusResponse.Blockch
 import com.github.comrada.crypto.wtc.resolver.parser.rest.TransactionResponse.Address;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,7 +67,10 @@ public class TransactionItemsLoader {
   }
 
   private String mapName(Address address) {
-    return address.ownerType().equals("exchange") ? address.owner() + " (Exchange)" : address.owner();
+    if (Objects.equals("unknown", address.ownerType())) {
+      return "unknown";
+    }
+    return Objects.equals("exchange", address.ownerType()) ? address.owner() + " (Exchange)" : address.owner();
   }
 
   public void updateStatus() {
