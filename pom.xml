@@ -13,7 +13,7 @@
 
   <groupId>com.github.comrada.crypto</groupId>
   <artifactId>whale-transactions-collector</artifactId>
-  <version>1.3</version>
+  <version>1.4</version>
   <name>Whale Transactions Collector</name>
   <description>Blockchain Transactions Collector from Whale Alert</description>
 
