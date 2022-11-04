@@ -15,6 +15,7 @@ public record StatusResponse(
     List<Blockchain> blockchains
 ) {
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   public record Blockchain(
       @JsonProperty
       String name,

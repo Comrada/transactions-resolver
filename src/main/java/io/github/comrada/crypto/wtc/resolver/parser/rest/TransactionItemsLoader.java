@@ -82,7 +82,7 @@ public class TransactionItemsLoader {
           .filter(blockchain -> blockchain.status().equals("connected"))
           .collect(toMap(Blockchain::name, Blockchain::symbols)));
     } catch (Exception e) {
-      LOGGER.error("Status update has failed. A transaction request will be made for all alerts.");
+      LOGGER.error("Status update has failed. A transaction request will be made for all alerts.", e);
     }
   }
 }
