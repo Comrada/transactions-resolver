@@ -1,12 +1,12 @@
 package io.github.comrada.crypto.wtc.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 

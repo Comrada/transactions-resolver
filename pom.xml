@@ -7,13 +7,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.5</version>
+    <version>3.0.0</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
   <groupId>com.github.comrada.crypto</groupId>
   <artifactId>whale-transactions-collector</artifactId>
-  <version>1.4</version>
+  <version>1.5</version>
   <name>Whale Transactions Collector</name>
   <description>Blockchain Transactions Collector from Whale Alert</description>
 
@@ -21,7 +21,6 @@
     <java.version>17</java.version>
     <jsoup.version>1.15.3</jsoup.version>
     <okhttp.version>5.0.0-alpha.10</okhttp.version>
-    <spring-native.version>0.12.1</spring-native.version>
   </properties>
 
   <dependencies>
@@ -48,11 +47,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-amqp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.experimental</groupId>
-      <artifactId>spring-native</artifactId>
-      <version>${spring-native.version}</version>
     </dependency>
 
     <!--	3rd Party libs	-->
@@ -116,50 +110,8 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <image>
-            <builder>paketobuildpacks/builder:tiny</builder>
-            <env>
-              <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-            </env>
-          </image>
-          <excludes>
-            <exclude>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-            </exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.experimental</groupId>
-        <artifactId>spring-aot-maven-plugin</artifactId>
-        <version>0.12.1</version>
-        <executions>
-          <execution>
-            <id>generate</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
-
-  <repositories>
-    <repository>
-      <id>spring-release</id>
-      <name>Spring release</name>
-      <url>https://repo.spring.io/release</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>spring-release</id>
-      <name>Spring release</name>
-      <url>https://repo.spring.io/release</url>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>

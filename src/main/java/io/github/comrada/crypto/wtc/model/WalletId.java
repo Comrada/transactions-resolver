@@ -2,11 +2,11 @@ package io.github.comrada.crypto.wtc.model;
 
 import static java.util.Objects.requireNonNull;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import lombok.Builder;
 
 @Builder
