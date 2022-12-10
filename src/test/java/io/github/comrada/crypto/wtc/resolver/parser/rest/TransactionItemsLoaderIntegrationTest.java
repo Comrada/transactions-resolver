@@ -51,6 +51,23 @@ class TransactionItemsLoaderIntegrationTest {
   }
 
   @Test
+  void whenEthereumAddressDoesNotStartWith0x_thenAdded() throws IOException {
+    TransactionDetail detail = new TransactionDetail("ethereum", Instant.now(),
+        "0x32dff5620f147d94d4c7e3db197d9d18e8ce067d137809886d6c9c3445868118",
+        "https://whale-alert.io/transaction/ethereum/0x32dff5620f147d94d4c7e3db197d9d18e8ce067d137809886d6c9c3445868118");
+    String transaction = readFile(getClass(), "ethereum-transaction.json");
+    when(httpClient.load("https://api.whale-alert.io/v1/transaction/%s/%s".formatted(detail.blockchain(), detail.hash())))
+        .thenReturn(transaction);
+    List<TransactionItem> items = transactionItemsLoader.load(detail);
+    TransactionItem expected = new TransactionItem("transfer", bigDecimal(147161000, 0), "usdt", bigDecimal(146768320, 0),
+        "https://whale-alert.io/transaction/ethereum/0x32dff5620f147d94d4c7e3db197d9d18e8ce067d137809886d6c9c3445868118",
+        "0x5754284f345afc66a98fbb0a0afe71e0f007b949", "unknown", "0x53d2e40b2d24ac36bc4be85d8b677248c1c4c9bb", "Binance (Exchange)");
+
+    assertEquals(1, items.size());
+    assertEquals(expected, items.get(0));
+  }
+
+  @Test
   void supports() {
     assertFalse(transactionItemsLoader.supports("Litecoin"));
     assertFalse(transactionItemsLoader.supports("Dogecoin"));

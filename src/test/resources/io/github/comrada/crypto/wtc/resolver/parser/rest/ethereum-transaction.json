@@ -1,0 +1,27 @@
+{
+  "result": "success",
+  "count": 1,
+  "transactions": [
+    {
+      "blockchain": "ethereum",
+      "symbol": "usdt",
+      "id": "1937310575",
+      "transaction_type": "transfer",
+      "hash": "32dff5620f147d94d4c7e3db197d9d18e8ce067d137809886d6c9c3445868118",
+      "from": {
+        "address": "5754284f345afc66a98fbb0a0afe71e0f007b949",
+        "owner": "unknown",
+        "owner_type": "unknown"
+      },
+      "to": {
+        "address": "53d2e40b2d24ac36bc4be85d8b677248c1c4c9bb",
+        "owner": "Binance",
+        "owner_type": "exchange"
+      },
+      "timestamp": 1670684867,
+      "amount": 147161000,
+      "amount_usd": 146768320,
+      "transaction_count": 1
+    }
+  ]
+}

@@ -47,9 +47,9 @@ public class TransactionItemsLoader {
                   transaction.symbol(),
                   transaction.amountUsd(),
                   detail.transactionUrl(),
-                  transaction.from().address(),
+                  fixNotHexEthereumAddress(transaction.blockchain(), transaction.from().address()),
                   mapName(transaction.from()),
-                  transaction.to().address(),
+                  fixNotHexEthereumAddress(transaction.blockchain(), transaction.to().address()),
                   mapName(transaction.to())
               ))
               .toList())
@@ -81,8 +81,13 @@ public class TransactionItemsLoader {
       supportedBlockchains.putAll(response.blockchains().stream()
           .filter(blockchain -> blockchain.status().equals("connected"))
           .collect(toMap(Blockchain::name, Blockchain::symbols)));
+      LOGGER.info("{} blockchains supported", supportedBlockchains.size());
     } catch (Exception e) {
       LOGGER.error("Status update has failed. A transaction request will be made for all alerts.", e);
     }
+  }
+
+  private String fixNotHexEthereumAddress(String blockchain, String address) {
+    return blockchain.equalsIgnoreCase("ethereum") && !address.startsWith("0x") ? "0x" + address : address;
   }
 }
